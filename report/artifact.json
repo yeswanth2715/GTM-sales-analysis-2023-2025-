@@ -1,0 +1,959 @@
+{
+  "surface": "report",
+  "manifest": {
+    "version": 1,
+    "surface": "report",
+    "title": "B2B SaaS Revenue Growth & GTM Performance",
+    "description": "A decision-ready analysis of recurring-revenue growth, acquisition-channel quality, post-sale expansion, and permanent churn in a fictional B2B SaaS CRM.",
+    "generatedAt": "2026-08-23T16:30:00Z",
+    "sources": [
+      {
+        "id": "src_kpis",
+        "label": "Executive KPI query",
+        "path": "sql/02_executive_kpis.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "WITH\nperiod_revenue AS (\n    SELECT SUM(recognized_revenue_inr) AS total_revenue_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n),\nending_base AS (\n    SELECT\n        SUM(closing_mrr_inr) AS ending_mrr_inr,\n        COUNT(DISTINCT customer_id) AS ending_active_customers\n    FROM revenue\n    WHERE revenue_month = '2025-12-01'\n),\nstarting_cohort AS (\n    SELECT customer_id, closing_mrr_inr AS starting_mrr_inr\n    FROM revenue\n    WHERE revenue_month = '2024-12-01'\n),\nending_cohort AS (\n    SELECT customer_id, closing_mrr_inr AS ending_mrr_inr\n    FROM revenue\n    WHERE revenue_month = '2025-12-01'\n),\nretention AS (\n    SELECT\n        SUM(s.starting_mrr_inr) AS starting_mrr_inr,\n        SUM(COALESCE(e.ending_mrr_inr, 0)) AS retained_ending_mrr_inr,\n        SUM(MIN(s.starting_mrr_inr, COALESCE(e.ending_mrr_inr, 0))) AS gross_retained_mrr_inr\n    FROM starting_cohort s\n    LEFT JOIN ending_cohort e USING (customer_id)\n),\nnew_business AS (\n    SELECT\n        COUNT(*) AS new_customers_2025,\n        SUM(movement_mrr_inr) * 12 AS new_arr_2025_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2025-01-01' AND '2025-12-01'\n      AND revenue_type = 'New'\n),\ngrowth_events AS (\n    SELECT\n        SUM(CASE WHEN revenue_type = 'Expansion' THEN movement_mrr_inr ELSE 0 END) * 12 AS expansion_arr_2025_inr,\n        SUM(CASE WHEN revenue_type = 'Upgrade' THEN movement_mrr_inr ELSE 0 END) * 12 AS upgrade_arr_2025_inr,\n        SUM(CASE WHEN revenue_type = 'Reactivation' THEN movement_mrr_inr ELSE 0 END) * 12 AS reactivated_arr_2025_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2025-01-01' AND '2025-12-01'\n),\nending_2023 AS (\n    SELECT SUM(closing_mrr_inr) AS mrr_inr\n    FROM revenue WHERE revenue_month = '2023-12-01'\n)\nSELECT\n    p.total_revenue_inr,\n    e.ending_mrr_inr,\n    e.ending_mrr_inr * 12 AS ending_arr_inr,\n    e.ending_active_customers,\n    n.new_customers_2025,\n    n.new_arr_2025_inr,\n    g.expansion_arr_2025_inr,\n    g.upgrade_arr_2025_inr,\n    g.reactivated_arr_2025_inr,\n    ROUND(100.0 * r.retained_ending_mrr_inr / NULLIF(r.starting_mrr_inr, 0), 1) AS nrr_2025_pct,\n    ROUND(100.0 * r.gross_retained_mrr_inr / NULLIF(r.starting_mrr_inr, 0), 1) AS grr_2025_pct,\n    ROUND(100.0 * (e.ending_mrr_inr - y.mrr_inr) / NULLIF(y.mrr_inr, 0), 1) AS two_year_mrr_growth_pct\nFROM period_revenue p\nCROSS JOIN ending_base e\nCROSS JOIN retention r\nCROSS JOIN new_business n\nCROSS JOIN growth_events g\nCROSS JOIN ending_2023 y;\n",
+          "description": "Calculates ending recurring-revenue scale, new and post-sale growth, and 2025 cohort retention.",
+          "tables_used": [
+            "customers",
+            "revenue"
+          ],
+          "filters": [
+            "Revenue months from 2023-01-01 through 2025-12-01",
+            "2025 retention cohort starts in December 2024"
+          ],
+          "metric_definitions": {
+            "Ending ARR": "Sum December 2025 closing MRR and multiply by 12.",
+            "NRR": "December 2025 MRR for the December 2024 starting cohort divided by that cohort's starting MRR; new customers excluded.",
+            "GRR": "Same cohort, with each customer's ending MRR capped at starting MRR."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
+      },
+      {
+        "id": "src_monthly",
+        "label": "Monthly revenue growth query",
+        "path": "sql/03_monthly_revenue_growth.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "WITH monthly AS (\n    SELECT\n        revenue_month,\n        SUM(recognized_revenue_inr) AS recognized_revenue_inr,\n        SUM(closing_mrr_inr) AS ending_mrr_inr,\n        SUM(arr_run_rate_inr) AS ending_arr_inr,\n        COUNT(DISTINCT customer_id) AS active_customers,\n        SUM(CASE WHEN revenue_type = 'New' THEN 1 ELSE 0 END) AS new_customers,\n        SUM(CASE WHEN revenue_type = 'Expansion' THEN movement_mrr_inr ELSE 0 END) AS expansion_mrr_inr,\n        SUM(CASE WHEN revenue_type = 'Upgrade' THEN movement_mrr_inr ELSE 0 END) AS upgrade_mrr_inr,\n        SUM(CASE WHEN revenue_type = 'Reactivation' THEN movement_mrr_inr ELSE 0 END) AS reactivated_mrr_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY revenue_month\n)\nSELECT\n    revenue_month,\n    recognized_revenue_inr,\n    ending_mrr_inr,\n    ending_arr_inr,\n    active_customers,\n    new_customers,\n    expansion_mrr_inr,\n    upgrade_mrr_inr,\n    reactivated_mrr_inr,\n    ROUND(\n        100.0 * (ending_mrr_inr - LAG(ending_mrr_inr, 12) OVER (ORDER BY revenue_month))\n        / NULLIF(LAG(ending_mrr_inr, 12) OVER (ORDER BY revenue_month), 0),\n        1\n    ) AS yoy_mrr_growth_pct\nFROM monthly\nORDER BY revenue_month;\n",
+          "description": "Aggregates monthly MRR, ARR, customer volume, and growth movements across 36 months.",
+          "tables_used": [
+            "revenue"
+          ],
+          "filters": [
+            "Revenue months from 2023-01-01 through 2025-12-01"
+          ],
+          "metric_definitions": {
+            "Ending ARR": "Sum customer closing MRR by month and multiply by 12."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
+      },
+      {
+        "id": "src_channels",
+        "label": "GTM channel performance query",
+        "path": "sql/04_gtm_channel_performance.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "WITH customer_revenue AS (\n    SELECT\n        c.customer_id,\n        c.acquisition_channel,\n        c.first_contract_date,\n        c.lifecycle_status,\n        SUM(r.recognized_revenue_inr) AS recognized_revenue_inr,\n        SUM(CASE WHEN r.revenue_month = '2025-12-01' THEN r.arr_run_rate_inr ELSE 0 END) AS ending_arr_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'New' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS new_arr_2025_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'Expansion' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS expansion_arr_2025_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'Upgrade' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS upgrade_arr_2025_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'Reactivation' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS reactivated_arr_2025_inr\n    FROM customers c\n    LEFT JOIN revenue r ON r.customer_id = c.customer_id\n    GROUP BY c.customer_id, c.acquisition_channel, c.first_contract_date, c.lifecycle_status\n)\nSELECT\n    acquisition_channel,\n    COUNT(*) AS acquired_customers,\n    SUM(CASE WHEN first_contract_date BETWEEN '2025-01-01' AND '2025-12-31' THEN 1 ELSE 0 END) AS new_customers_2025,\n    SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END) AS active_customers_dec_2025,\n    SUM(recognized_revenue_inr) AS recognized_revenue_36m_inr,\n    SUM(ending_arr_inr) AS ending_arr_inr,\n    SUM(new_arr_2025_inr) AS new_arr_2025_inr,\n    SUM(expansion_arr_2025_inr) AS expansion_arr_2025_inr,\n    SUM(upgrade_arr_2025_inr) AS upgrade_arr_2025_inr,\n    SUM(reactivated_arr_2025_inr) AS reactivated_arr_2025_inr,\n    SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END) AS permanently_churned_customers,\n    ROUND(100.0 * SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END) / COUNT(*), 1) AS observed_logo_churn_pct,\n    ROUND(1.0 * SUM(ending_arr_inr) / NULLIF(SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END), 0), 0) AS avg_arr_per_active_customer_inr\nFROM customer_revenue\nGROUP BY acquisition_channel\nORDER BY ending_arr_inr DESC;\n",
+          "description": "Compares acquisition channels on ending ARR, customer volume, new ARR, post-sale growth, and permanent churn.",
+          "tables_used": [
+            "customers",
+            "revenue"
+          ],
+          "filters": [
+            "Ending ARR is measured at 2025-12-01",
+            "Permanent churn is observed over the full modeled history"
+          ],
+          "metric_definitions": {
+            "Observed logo churn": "Permanently churned customers divided by all customers attributed to the channel; not annualized."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
+      },
+      {
+        "id": "src_growth",
+        "label": "Growth event bridge query",
+        "path": "sql/07_growth_event_bridge.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "SELECT\n    CAST(substr(revenue_month, 1, 4) AS INTEGER) AS year,\n    revenue_type,\n    COUNT(*) AS event_count,\n    SUM(movement_mrr_inr) AS added_mrr_inr,\n    SUM(movement_mrr_inr) * 12 AS added_arr_inr\nFROM revenue\nWHERE revenue_type IN ('New', 'Expansion', 'Upgrade', 'Reactivation')\n  AND revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\nGROUP BY CAST(substr(revenue_month, 1, 4) AS INTEGER), revenue_type\nORDER BY year, CASE revenue_type\n    WHEN 'New' THEN 1\n    WHEN 'Expansion' THEN 2\n    WHEN 'Upgrade' THEN 3\n    WHEN 'Reactivation' THEN 4\nEND;\n",
+          "description": "Summarizes ARR added by new business, expansion, upgrades, and reactivation.",
+          "tables_used": [
+            "revenue"
+          ],
+          "filters": [
+            "Events from 2023-01-01 through 2025-12-01",
+            "Chart uses 2025 events"
+          ],
+          "metric_definitions": {
+            "Added ARR": "Positive event MRR movement multiplied by 12."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
+      },
+      {
+        "id": "src_churn",
+        "label": "Permanent churn reason query",
+        "path": "sql/08_churn_reasons.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "SELECT\n    churn_reason,\n    COUNT(*) AS churned_customers,\n    SUM(mrr_lost_inr) AS mrr_lost_inr,\n    SUM(mrr_lost_inr) * 12 AS arr_lost_inr,\n    ROUND(AVG(tenure_months), 1) AS avg_tenure_months,\n    ROUND(100.0 * SUM(mrr_lost_inr) / SUM(SUM(mrr_lost_inr)) OVER (), 1) AS lost_arr_mix_pct\nFROM churn\nWHERE churn_date BETWEEN '2023-01-01' AND '2025-12-31'\nGROUP BY churn_reason\nORDER BY arr_lost_inr DESC;\n",
+          "description": "Ranks permanent churn reasons by lost recurring-revenue run-rate.",
+          "tables_used": [
+            "churn"
+          ],
+          "filters": [
+            "Churn dates from 2023-01-01 through 2025-12-31",
+            "Reactivated customers excluded"
+          ],
+          "metric_definitions": {
+            "ARR lost": "MRR lost at permanent churn multiplied by 12."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
+      }
+    ],
+    "cards": [
+      {
+        "id": "card_ending_arr",
+        "description": "December 2025 recurring-revenue run-rate.",
+        "dataset": "kpis",
+        "sourceId": "src_kpis",
+        "metrics": [
+          {
+            "label": "Ending ARR",
+            "field": "ending_arr_crore",
+            "format": "number",
+            "unit": "\u20b9 crore"
+          },
+          {
+            "label": "Two-year MRR growth",
+            "field": "two_year_mrr_growth_rate",
+            "format": "percent",
+            "signed": true
+          }
+        ]
+      },
+      {
+        "id": "card_active_customers",
+        "description": "Professional and Enterprise customers with December 2025 revenue.",
+        "dataset": "kpis",
+        "sourceId": "src_kpis",
+        "metrics": [
+          {
+            "label": "Active customers",
+            "field": "ending_active_customers",
+            "format": "number"
+          }
+        ]
+      },
+      {
+        "id": "card_nrr",
+        "description": "Retention for customers active in December 2024; new customers excluded.",
+        "dataset": "kpis",
+        "sourceId": "src_kpis",
+        "metrics": [
+          {
+            "label": "NRR",
+            "field": "nrr_2025_rate",
+            "format": "percent"
+          },
+          {
+            "label": "GRR",
+            "field": "grr_2025_rate",
+            "format": "percent"
+          }
+        ]
+      }
+    ],
+    "charts": [
+      {
+        "id": "chart_monthly_arr",
+        "title": "Monthly ending ARR",
+        "description": "Thirty-six observed months, values in INR crore.",
+        "type": "line",
+        "dataset": "monthly_growth",
+        "sourceId": "src_monthly",
+        "encodings": {
+          "x": {
+            "field": "revenue_month",
+            "type": "temporal",
+            "title": "Month"
+          },
+          "y": {
+            "field": "ending_arr_crore",
+            "type": "quantitative",
+            "title": "Ending ARR (\u20b9 crore)"
+          }
+        },
+        "options": {
+          "legend": {
+            "show": false
+          },
+          "palette": {
+            "kind": "single",
+            "colors": [
+              "#2563EB"
+            ]
+          }
+        }
+      },
+      {
+        "id": "chart_channels",
+        "title": "Ending ARR by acquisition channel",
+        "description": "December 2025 run-rate, values in INR crore.",
+        "type": "bar",
+        "dataset": "channel_performance",
+        "sourceId": "src_channels",
+        "encodings": {
+          "x": {
+            "field": "acquisition_channel",
+            "type": "nominal",
+            "title": "Acquisition channel"
+          },
+          "y": {
+            "field": "ending_arr_crore",
+            "type": "quantitative",
+            "title": "Ending ARR (\u20b9 crore)"
+          }
+        },
+        "options": {
+          "orientation": "horizontal",
+          "grouping": "grouped",
+          "legend": {
+            "show": false
+          }
+        }
+      },
+      {
+        "id": "chart_growth_engines",
+        "title": "2025 ARR added by growth motion",
+        "description": "New business and positive post-sale movements, values in INR crore.",
+        "type": "bar",
+        "dataset": "growth_events_2025",
+        "sourceId": "src_growth",
+        "encodings": {
+          "x": {
+            "field": "revenue_type",
+            "type": "nominal",
+            "title": "Growth motion"
+          },
+          "y": {
+            "field": "added_arr_crore",
+            "type": "quantitative",
+            "title": "Added ARR (\u20b9 crore)"
+          }
+        },
+        "options": {
+          "orientation": "vertical",
+          "grouping": "grouped",
+          "legend": {
+            "show": false
+          }
+        }
+      },
+      {
+        "id": "chart_churn_reasons",
+        "title": "Permanent churn by reason",
+        "description": "ARR lost during 2023\u20132025, values in INR crore.",
+        "type": "bar",
+        "dataset": "churn_reasons",
+        "sourceId": "src_churn",
+        "encodings": {
+          "x": {
+            "field": "churn_reason",
+            "type": "nominal",
+            "title": "Churn reason"
+          },
+          "y": {
+            "field": "arr_lost_crore",
+            "type": "quantitative",
+            "title": "ARR lost (\u20b9 crore)"
+          }
+        },
+        "options": {
+          "orientation": "horizontal",
+          "grouping": "grouped",
+          "legend": {
+            "show": false
+          }
+        }
+      }
+    ],
+    "tables": [
+      {
+        "id": "table_channels",
+        "title": "Acquisition channel detail",
+        "description": "Ending scale, 2025 new business, active customers, and observed permanent churn.",
+        "dataset": "channel_performance",
+        "sourceId": "src_channels",
+        "columns": [
+          {
+            "field": "rank",
+            "label": "Rank",
+            "format": "number"
+          },
+          {
+            "field": "acquisition_channel",
+            "label": "Channel"
+          },
+          {
+            "field": "ending_arr_crore",
+            "label": "Ending ARR",
+            "format": "number",
+            "unit": "\u20b9 crore"
+          },
+          {
+            "field": "new_arr_2025_crore",
+            "label": "2025 new ARR",
+            "format": "number",
+            "unit": "\u20b9 crore"
+          },
+          {
+            "field": "active_customers_dec_2025",
+            "label": "Active customers",
+            "format": "number"
+          },
+          {
+            "field": "observed_logo_churn_rate",
+            "label": "Observed logo churn",
+            "format": "percent"
+          }
+        ],
+        "defaultSort": {
+          "field": "ending_arr_crore",
+          "direction": "desc"
+        }
+      }
+    ],
+    "blocks": [
+      {
+        "id": "title",
+        "type": "markdown",
+        "body": "# B2B SaaS Revenue Growth & GTM Performance"
+      },
+      {
+        "id": "executive_summary",
+        "type": "markdown",
+        "sourceId": "src_kpis",
+        "body": "## Executive Summary\n\n- **Recurring revenue grew strongly.** Ending ARR reached \u20b9150.9 crore in December 2025, 152.6% above the December 2023 MRR run-rate.\n- **Retention is healthy but must be read with gross losses.** The 2025 starting cohort ended at 100.7% NRR and 94.4% GRR.\n- **Post-sale motions matter.** Expansion, upgrades, and reactivation added \u20b912.0 crore of ARR during 2025.\n- **GTM quality is uneven.** Partner leads ending ARR, while Outbound reached similar scale with materially higher observed churn."
+      },
+      {
+        "id": "headline_metrics",
+        "type": "metric-strip",
+        "cardIds": [
+          "card_ending_arr",
+          "card_active_customers",
+          "card_nrr"
+        ]
+      },
+      {
+        "id": "growth_heading",
+        "type": "markdown",
+        "sourceId": "src_monthly",
+        "body": "## Revenue growth was sustained across the full period\n\nEnding ARR increased throughout 36 observed months rather than depending on one endpoint jump. The December 2025 run-rate reached \u20b9150.9 crore. **So what:** the modeled business has both scale and momentum, but the source of that growth determines how durable it is."
+      },
+      {
+        "id": "growth_chart",
+        "type": "chart",
+        "chartId": "chart_monthly_arr"
+      },
+      {
+        "id": "channel_heading",
+        "type": "markdown",
+        "sourceId": "src_channels",
+        "body": "## Partner leads the run-rate; Outbound needs tighter quality controls\n\nPartner finished first at \u20b939.5 crore of ending ARR. Outbound reached \u20b939.1 crore, but its 14.1% observed logo churn was the highest of the five channels. **So what:** protect Partner capacity and investigate Outbound qualification, integration fit, and implementation readiness before adding more volume."
+      },
+      {
+        "id": "channel_chart",
+        "type": "chart",
+        "chartId": "chart_channels"
+      },
+      {
+        "id": "channel_table",
+        "type": "table",
+        "tableId": "table_channels"
+      },
+      {
+        "id": "retention_heading",
+        "type": "markdown",
+        "sourceId": "src_growth",
+        "body": "## Post-sale growth keeps net retention above 100%\n\nNew business remained the largest 2025 ARR engine, while expansion, upgrades, and reactivation added another \u20b912.0 crore. Combined with 94.4% GRR, this explains why NRR was only slightly above 100%. **So what:** manage NRR and GRR together so expansion does not hide avoidable churn."
+      },
+      {
+        "id": "growth_engine_chart",
+        "type": "chart",
+        "chartId": "chart_growth_engines"
+      },
+      {
+        "id": "churn_heading",
+        "type": "markdown",
+        "sourceId": "src_churn",
+        "body": "## Integration and adoption issues are the clearest retention themes\n\nMissing integrations and low adoption together represented 60.8% of modeled ARR lost to permanent churn. **So what:** instrument integration activation and onboarding milestones during the first six months, then target customer-success intervention before risk becomes permanent churn."
+      },
+      {
+        "id": "churn_chart",
+        "type": "chart",
+        "chartId": "chart_churn_reasons"
+      },
+      {
+        "id": "recommendations",
+        "type": "markdown",
+        "body": "## Recommended next steps\n\n1. Prioritize Partner and Events for Enterprise acquisition while adding real pipeline and spend data before reallocating budget.\n2. Tighten Outbound qualification around integration requirements and implementation readiness.\n3. Instrument onboarding and integration activation in the first six months.\n4. Build a Professional-to-Enterprise upgrade signal using seat and integration growth.\n5. Review NRR beside GRR and permanent-churn reasons each month."
+      },
+      {
+        "id": "further_questions",
+        "type": "markdown",
+        "body": "## Further questions\n\n- Does channel quality remain after normalizing for customer tenure, industry, and initial contract size?\n- Which onboarding milestones best predict permanent churn versus temporary suspension?\n- How do CAC, payback, sales-cycle length, and win rate change the channel recommendation?"
+      },
+      {
+        "id": "caveats",
+        "type": "markdown",
+        "body": "## Caveats and assumptions\n\nThis report uses deterministic synthetic data. ARR is a modeled MRR run-rate, not audited revenue. Channel comparisons are descriptive and have different exposure periods. Funnel, CAC, quota, and sales-cycle metrics are out of scope because the four-table model has no lead, opportunity, activity, marketing-spend, or quota facts."
+      }
+    ]
+  },
+  "snapshot": {
+    "version": 1,
+    "status": "ready",
+    "generatedAt": "2026-08-23T16:30:00Z",
+    "datasets": {
+      "kpis": [
+        {
+          "ending_arr_crore": 150.9,
+          "ending_active_customers": 489,
+          "nrr_2025_rate": 1.0070000000000001,
+          "grr_2025_rate": 0.9440000000000001,
+          "two_year_mrr_growth_rate": 1.526
+        }
+      ],
+      "monthly_growth": [
+        {
+          "revenue_month": "2023-01-01",
+          "ending_arr_crore": 27.74,
+          "ending_mrr_crore": 2.31,
+          "active_customers": 104,
+          "new_customers": 8,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-02-01",
+          "ending_arr_crore": 30.67,
+          "ending_mrr_crore": 2.56,
+          "active_customers": 114,
+          "new_customers": 10,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-03-01",
+          "ending_arr_crore": 33.7,
+          "ending_mrr_crore": 2.81,
+          "active_customers": 125,
+          "new_customers": 12,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-04-01",
+          "ending_arr_crore": 36.15,
+          "ending_mrr_crore": 3.01,
+          "active_customers": 133,
+          "new_customers": 10,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-05-01",
+          "ending_arr_crore": 38.9,
+          "ending_mrr_crore": 3.24,
+          "active_customers": 143,
+          "new_customers": 10,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-06-01",
+          "ending_arr_crore": 41.71,
+          "ending_mrr_crore": 3.48,
+          "active_customers": 154,
+          "new_customers": 11,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-07-01",
+          "ending_arr_crore": 44.45,
+          "ending_mrr_crore": 3.7,
+          "active_customers": 164,
+          "new_customers": 10,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-08-01",
+          "ending_arr_crore": 46.72,
+          "ending_mrr_crore": 3.89,
+          "active_customers": 174,
+          "new_customers": 10,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-09-01",
+          "ending_arr_crore": 51.3,
+          "ending_mrr_crore": 4.28,
+          "active_customers": 186,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-10-01",
+          "ending_arr_crore": 54.32,
+          "ending_mrr_crore": 4.53,
+          "active_customers": 198,
+          "new_customers": 12,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-11-01",
+          "ending_arr_crore": 57.41,
+          "ending_mrr_crore": 4.78,
+          "active_customers": 207,
+          "new_customers": 11,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2023-12-01",
+          "ending_arr_crore": 59.74,
+          "ending_mrr_crore": 4.98,
+          "active_customers": 216,
+          "new_customers": 10,
+          "yoy_mrr_growth_rate": null
+        },
+        {
+          "revenue_month": "2024-01-01",
+          "ending_arr_crore": 62.08,
+          "ending_mrr_crore": 5.17,
+          "active_customers": 224,
+          "new_customers": 9,
+          "yoy_mrr_growth_rate": 1.238
+        },
+        {
+          "revenue_month": "2024-02-01",
+          "ending_arr_crore": 65.99,
+          "ending_mrr_crore": 5.5,
+          "active_customers": 236,
+          "new_customers": 11,
+          "yoy_mrr_growth_rate": 1.1520000000000001
+        },
+        {
+          "revenue_month": "2024-03-01",
+          "ending_arr_crore": 70.96,
+          "ending_mrr_crore": 5.91,
+          "active_customers": 250,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 1.1059999999999999
+        },
+        {
+          "revenue_month": "2024-04-01",
+          "ending_arr_crore": 73.69,
+          "ending_mrr_crore": 6.14,
+          "active_customers": 260,
+          "new_customers": 11,
+          "yoy_mrr_growth_rate": 1.0390000000000001
+        },
+        {
+          "revenue_month": "2024-05-01",
+          "ending_arr_crore": 77.29,
+          "ending_mrr_crore": 6.44,
+          "active_customers": 269,
+          "new_customers": 12,
+          "yoy_mrr_growth_rate": 0.987
+        },
+        {
+          "revenue_month": "2024-06-01",
+          "ending_arr_crore": 81.76,
+          "ending_mrr_crore": 6.81,
+          "active_customers": 283,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.96
+        },
+        {
+          "revenue_month": "2024-07-01",
+          "ending_arr_crore": 85.96,
+          "ending_mrr_crore": 7.16,
+          "active_customers": 294,
+          "new_customers": 12,
+          "yoy_mrr_growth_rate": 0.934
+        },
+        {
+          "revenue_month": "2024-08-01",
+          "ending_arr_crore": 88.87,
+          "ending_mrr_crore": 7.41,
+          "active_customers": 304,
+          "new_customers": 12,
+          "yoy_mrr_growth_rate": 0.902
+        },
+        {
+          "revenue_month": "2024-09-01",
+          "ending_arr_crore": 92.87,
+          "ending_mrr_crore": 7.74,
+          "active_customers": 316,
+          "new_customers": 14,
+          "yoy_mrr_growth_rate": 0.81
+        },
+        {
+          "revenue_month": "2024-10-01",
+          "ending_arr_crore": 95.86,
+          "ending_mrr_crore": 7.99,
+          "active_customers": 326,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.765
+        },
+        {
+          "revenue_month": "2024-11-01",
+          "ending_arr_crore": 98.89,
+          "ending_mrr_crore": 8.24,
+          "active_customers": 337,
+          "new_customers": 12,
+          "yoy_mrr_growth_rate": 0.723
+        },
+        {
+          "revenue_month": "2024-12-01",
+          "ending_arr_crore": 102.15,
+          "ending_mrr_crore": 8.51,
+          "active_customers": 346,
+          "new_customers": 11,
+          "yoy_mrr_growth_rate": 0.71
+        },
+        {
+          "revenue_month": "2025-01-01",
+          "ending_arr_crore": 106.99,
+          "ending_mrr_crore": 8.92,
+          "active_customers": 360,
+          "new_customers": 11,
+          "yoy_mrr_growth_rate": 0.723
+        },
+        {
+          "revenue_month": "2025-02-01",
+          "ending_arr_crore": 110.63,
+          "ending_mrr_crore": 9.22,
+          "active_customers": 373,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.677
+        },
+        {
+          "revenue_month": "2025-03-01",
+          "ending_arr_crore": 115.22,
+          "ending_mrr_crore": 9.6,
+          "active_customers": 385,
+          "new_customers": 15,
+          "yoy_mrr_growth_rate": 0.624
+        },
+        {
+          "revenue_month": "2025-04-01",
+          "ending_arr_crore": 117.61,
+          "ending_mrr_crore": 9.8,
+          "active_customers": 395,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.596
+        },
+        {
+          "revenue_month": "2025-05-01",
+          "ending_arr_crore": 122.18,
+          "ending_mrr_crore": 10.18,
+          "active_customers": 406,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.581
+        },
+        {
+          "revenue_month": "2025-06-01",
+          "ending_arr_crore": 124.88,
+          "ending_mrr_crore": 10.41,
+          "active_customers": 416,
+          "new_customers": 14,
+          "yoy_mrr_growth_rate": 0.527
+        },
+        {
+          "revenue_month": "2025-07-01",
+          "ending_arr_crore": 129.19,
+          "ending_mrr_crore": 10.77,
+          "active_customers": 428,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.503
+        },
+        {
+          "revenue_month": "2025-08-01",
+          "ending_arr_crore": 133.65,
+          "ending_mrr_crore": 11.14,
+          "active_customers": 440,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.504
+        },
+        {
+          "revenue_month": "2025-09-01",
+          "ending_arr_crore": 137.74,
+          "ending_mrr_crore": 11.48,
+          "active_customers": 453,
+          "new_customers": 16,
+          "yoy_mrr_growth_rate": 0.483
+        },
+        {
+          "revenue_month": "2025-10-01",
+          "ending_arr_crore": 142.37,
+          "ending_mrr_crore": 11.86,
+          "active_customers": 467,
+          "new_customers": 15,
+          "yoy_mrr_growth_rate": 0.485
+        },
+        {
+          "revenue_month": "2025-11-01",
+          "ending_arr_crore": 147.03,
+          "ending_mrr_crore": 12.25,
+          "active_customers": 478,
+          "new_customers": 14,
+          "yoy_mrr_growth_rate": 0.48700000000000004
+        },
+        {
+          "revenue_month": "2025-12-01",
+          "ending_arr_crore": 150.92,
+          "ending_mrr_crore": 12.58,
+          "active_customers": 489,
+          "new_customers": 13,
+          "yoy_mrr_growth_rate": 0.47700000000000004
+        }
+      ],
+      "channel_performance": [
+        {
+          "rank": 1,
+          "acquisition_channel": "Partner",
+          "ending_arr_crore": 39.52,
+          "new_arr_2025_crore": 13.93,
+          "active_customers_dec_2025": 117,
+          "observed_logo_churn_rate": 0.055999999999999994,
+          "avg_arr_per_active_customer_crore": 0.338
+        },
+        {
+          "rank": 2,
+          "acquisition_channel": "Outbound",
+          "ending_arr_crore": 39.15,
+          "new_arr_2025_crore": 11.33,
+          "active_customers_dec_2025": 128,
+          "observed_logo_churn_rate": 0.141,
+          "avg_arr_per_active_customer_crore": 0.306
+        },
+        {
+          "rank": 3,
+          "acquisition_channel": "Events",
+          "ending_arr_crore": 27.82,
+          "new_arr_2025_crore": 9.6,
+          "active_customers_dec_2025": 75,
+          "observed_logo_churn_rate": 0.051,
+          "avg_arr_per_active_customer_crore": 0.371
+        },
+        {
+          "rank": 4,
+          "acquisition_channel": "Inbound",
+          "ending_arr_crore": 26.94,
+          "new_arr_2025_crore": 7.9,
+          "active_customers_dec_2025": 106,
+          "observed_logo_churn_rate": 0.062,
+          "avg_arr_per_active_customer_crore": 0.254
+        },
+        {
+          "rank": 5,
+          "acquisition_channel": "Referral",
+          "ending_arr_crore": 17.5,
+          "new_arr_2025_crore": 3.81,
+          "active_customers_dec_2025": 63,
+          "observed_logo_churn_rate": 0.016,
+          "avg_arr_per_active_customer_crore": 0.278
+        }
+      ],
+      "growth_events_2025": [
+        {
+          "revenue_type": "New",
+          "event_count": 163,
+          "added_arr_crore": 46.57,
+          "added_mrr_crore": 3.88
+        },
+        {
+          "revenue_type": "Expansion",
+          "event_count": 92,
+          "added_arr_crore": 3.95,
+          "added_mrr_crore": 0.33
+        },
+        {
+          "revenue_type": "Upgrade",
+          "event_count": 22,
+          "added_arr_crore": 3.37,
+          "added_mrr_crore": 0.28
+        },
+        {
+          "revenue_type": "Reactivation",
+          "event_count": 16,
+          "added_arr_crore": 4.67,
+          "added_mrr_crore": 0.39
+        }
+      ],
+      "churn_reasons": [
+        {
+          "churn_reason": "Missing Integration",
+          "churned_customers": 14,
+          "arr_lost_crore": 3.57,
+          "lost_arr_mix_rate": 0.313,
+          "avg_tenure_months": 17.6
+        },
+        {
+          "churn_reason": "Low Adoption",
+          "churned_customers": 11,
+          "arr_lost_crore": 3.35,
+          "lost_arr_mix_rate": 0.295,
+          "avg_tenure_months": 15.1
+        },
+        {
+          "churn_reason": "Budget Cuts",
+          "churned_customers": 8,
+          "arr_lost_crore": 2.63,
+          "lost_arr_mix_rate": 0.231,
+          "avg_tenure_months": 19.3
+        },
+        {
+          "churn_reason": "Vendor Consolidation",
+          "churned_customers": 5,
+          "arr_lost_crore": 0.99,
+          "lost_arr_mix_rate": 0.087,
+          "avg_tenure_months": 14.8
+        },
+        {
+          "churn_reason": "Implementation Complexity",
+          "churned_customers": 2,
+          "arr_lost_crore": 0.84,
+          "lost_arr_mix_rate": 0.07400000000000001,
+          "avg_tenure_months": 11.5
+        }
+      ]
+    }
+  },
+  "sources": [
+    {
+      "id": "src_kpis",
+      "label": "Executive KPI query",
+      "path": "sql/02_executive_kpis.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "WITH\nperiod_revenue AS (\n    SELECT SUM(recognized_revenue_inr) AS total_revenue_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n),\nending_base AS (\n    SELECT\n        SUM(closing_mrr_inr) AS ending_mrr_inr,\n        COUNT(DISTINCT customer_id) AS ending_active_customers\n    FROM revenue\n    WHERE revenue_month = '2025-12-01'\n),\nstarting_cohort AS (\n    SELECT customer_id, closing_mrr_inr AS starting_mrr_inr\n    FROM revenue\n    WHERE revenue_month = '2024-12-01'\n),\nending_cohort AS (\n    SELECT customer_id, closing_mrr_inr AS ending_mrr_inr\n    FROM revenue\n    WHERE revenue_month = '2025-12-01'\n),\nretention AS (\n    SELECT\n        SUM(s.starting_mrr_inr) AS starting_mrr_inr,\n        SUM(COALESCE(e.ending_mrr_inr, 0)) AS retained_ending_mrr_inr,\n        SUM(MIN(s.starting_mrr_inr, COALESCE(e.ending_mrr_inr, 0))) AS gross_retained_mrr_inr\n    FROM starting_cohort s\n    LEFT JOIN ending_cohort e USING (customer_id)\n),\nnew_business AS (\n    SELECT\n        COUNT(*) AS new_customers_2025,\n        SUM(movement_mrr_inr) * 12 AS new_arr_2025_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2025-01-01' AND '2025-12-01'\n      AND revenue_type = 'New'\n),\ngrowth_events AS (\n    SELECT\n        SUM(CASE WHEN revenue_type = 'Expansion' THEN movement_mrr_inr ELSE 0 END) * 12 AS expansion_arr_2025_inr,\n        SUM(CASE WHEN revenue_type = 'Upgrade' THEN movement_mrr_inr ELSE 0 END) * 12 AS upgrade_arr_2025_inr,\n        SUM(CASE WHEN revenue_type = 'Reactivation' THEN movement_mrr_inr ELSE 0 END) * 12 AS reactivated_arr_2025_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2025-01-01' AND '2025-12-01'\n),\nending_2023 AS (\n    SELECT SUM(closing_mrr_inr) AS mrr_inr\n    FROM revenue WHERE revenue_month = '2023-12-01'\n)\nSELECT\n    p.total_revenue_inr,\n    e.ending_mrr_inr,\n    e.ending_mrr_inr * 12 AS ending_arr_inr,\n    e.ending_active_customers,\n    n.new_customers_2025,\n    n.new_arr_2025_inr,\n    g.expansion_arr_2025_inr,\n    g.upgrade_arr_2025_inr,\n    g.reactivated_arr_2025_inr,\n    ROUND(100.0 * r.retained_ending_mrr_inr / NULLIF(r.starting_mrr_inr, 0), 1) AS nrr_2025_pct,\n    ROUND(100.0 * r.gross_retained_mrr_inr / NULLIF(r.starting_mrr_inr, 0), 1) AS grr_2025_pct,\n    ROUND(100.0 * (e.ending_mrr_inr - y.mrr_inr) / NULLIF(y.mrr_inr, 0), 1) AS two_year_mrr_growth_pct\nFROM period_revenue p\nCROSS JOIN ending_base e\nCROSS JOIN retention r\nCROSS JOIN new_business n\nCROSS JOIN growth_events g\nCROSS JOIN ending_2023 y;\n",
+        "description": "Calculates ending recurring-revenue scale, new and post-sale growth, and 2025 cohort retention.",
+        "tables_used": [
+          "customers",
+          "revenue"
+        ],
+        "filters": [
+          "Revenue months from 2023-01-01 through 2025-12-01",
+          "2025 retention cohort starts in December 2024"
+        ],
+        "metric_definitions": {
+          "Ending ARR": "Sum December 2025 closing MRR and multiply by 12.",
+          "NRR": "December 2025 MRR for the December 2024 starting cohort divided by that cohort's starting MRR; new customers excluded.",
+          "GRR": "Same cohort, with each customer's ending MRR capped at starting MRR."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    },
+    {
+      "id": "src_monthly",
+      "label": "Monthly revenue growth query",
+      "path": "sql/03_monthly_revenue_growth.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "WITH monthly AS (\n    SELECT\n        revenue_month,\n        SUM(recognized_revenue_inr) AS recognized_revenue_inr,\n        SUM(closing_mrr_inr) AS ending_mrr_inr,\n        SUM(arr_run_rate_inr) AS ending_arr_inr,\n        COUNT(DISTINCT customer_id) AS active_customers,\n        SUM(CASE WHEN revenue_type = 'New' THEN 1 ELSE 0 END) AS new_customers,\n        SUM(CASE WHEN revenue_type = 'Expansion' THEN movement_mrr_inr ELSE 0 END) AS expansion_mrr_inr,\n        SUM(CASE WHEN revenue_type = 'Upgrade' THEN movement_mrr_inr ELSE 0 END) AS upgrade_mrr_inr,\n        SUM(CASE WHEN revenue_type = 'Reactivation' THEN movement_mrr_inr ELSE 0 END) AS reactivated_mrr_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY revenue_month\n)\nSELECT\n    revenue_month,\n    recognized_revenue_inr,\n    ending_mrr_inr,\n    ending_arr_inr,\n    active_customers,\n    new_customers,\n    expansion_mrr_inr,\n    upgrade_mrr_inr,\n    reactivated_mrr_inr,\n    ROUND(\n        100.0 * (ending_mrr_inr - LAG(ending_mrr_inr, 12) OVER (ORDER BY revenue_month))\n        / NULLIF(LAG(ending_mrr_inr, 12) OVER (ORDER BY revenue_month), 0),\n        1\n    ) AS yoy_mrr_growth_pct\nFROM monthly\nORDER BY revenue_month;\n",
+        "description": "Aggregates monthly MRR, ARR, customer volume, and growth movements across 36 months.",
+        "tables_used": [
+          "revenue"
+        ],
+        "filters": [
+          "Revenue months from 2023-01-01 through 2025-12-01"
+        ],
+        "metric_definitions": {
+          "Ending ARR": "Sum customer closing MRR by month and multiply by 12."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    },
+    {
+      "id": "src_channels",
+      "label": "GTM channel performance query",
+      "path": "sql/04_gtm_channel_performance.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "WITH customer_revenue AS (\n    SELECT\n        c.customer_id,\n        c.acquisition_channel,\n        c.first_contract_date,\n        c.lifecycle_status,\n        SUM(r.recognized_revenue_inr) AS recognized_revenue_inr,\n        SUM(CASE WHEN r.revenue_month = '2025-12-01' THEN r.arr_run_rate_inr ELSE 0 END) AS ending_arr_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'New' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS new_arr_2025_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'Expansion' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS expansion_arr_2025_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'Upgrade' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS upgrade_arr_2025_inr,\n        SUM(CASE WHEN r.revenue_month BETWEEN '2025-01-01' AND '2025-12-01' AND r.revenue_type = 'Reactivation' THEN r.movement_mrr_inr * 12 ELSE 0 END) AS reactivated_arr_2025_inr\n    FROM customers c\n    LEFT JOIN revenue r ON r.customer_id = c.customer_id\n    GROUP BY c.customer_id, c.acquisition_channel, c.first_contract_date, c.lifecycle_status\n)\nSELECT\n    acquisition_channel,\n    COUNT(*) AS acquired_customers,\n    SUM(CASE WHEN first_contract_date BETWEEN '2025-01-01' AND '2025-12-31' THEN 1 ELSE 0 END) AS new_customers_2025,\n    SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END) AS active_customers_dec_2025,\n    SUM(recognized_revenue_inr) AS recognized_revenue_36m_inr,\n    SUM(ending_arr_inr) AS ending_arr_inr,\n    SUM(new_arr_2025_inr) AS new_arr_2025_inr,\n    SUM(expansion_arr_2025_inr) AS expansion_arr_2025_inr,\n    SUM(upgrade_arr_2025_inr) AS upgrade_arr_2025_inr,\n    SUM(reactivated_arr_2025_inr) AS reactivated_arr_2025_inr,\n    SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END) AS permanently_churned_customers,\n    ROUND(100.0 * SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END) / COUNT(*), 1) AS observed_logo_churn_pct,\n    ROUND(1.0 * SUM(ending_arr_inr) / NULLIF(SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END), 0), 0) AS avg_arr_per_active_customer_inr\nFROM customer_revenue\nGROUP BY acquisition_channel\nORDER BY ending_arr_inr DESC;\n",
+        "description": "Compares acquisition channels on ending ARR, customer volume, new ARR, post-sale growth, and permanent churn.",
+        "tables_used": [
+          "customers",
+          "revenue"
+        ],
+        "filters": [
+          "Ending ARR is measured at 2025-12-01",
+          "Permanent churn is observed over the full modeled history"
+        ],
+        "metric_definitions": {
+          "Observed logo churn": "Permanently churned customers divided by all customers attributed to the channel; not annualized."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    },
+    {
+      "id": "src_growth",
+      "label": "Growth event bridge query",
+      "path": "sql/07_growth_event_bridge.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "SELECT\n    CAST(substr(revenue_month, 1, 4) AS INTEGER) AS year,\n    revenue_type,\n    COUNT(*) AS event_count,\n    SUM(movement_mrr_inr) AS added_mrr_inr,\n    SUM(movement_mrr_inr) * 12 AS added_arr_inr\nFROM revenue\nWHERE revenue_type IN ('New', 'Expansion', 'Upgrade', 'Reactivation')\n  AND revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\nGROUP BY CAST(substr(revenue_month, 1, 4) AS INTEGER), revenue_type\nORDER BY year, CASE revenue_type\n    WHEN 'New' THEN 1\n    WHEN 'Expansion' THEN 2\n    WHEN 'Upgrade' THEN 3\n    WHEN 'Reactivation' THEN 4\nEND;\n",
+        "description": "Summarizes ARR added by new business, expansion, upgrades, and reactivation.",
+        "tables_used": [
+          "revenue"
+        ],
+        "filters": [
+          "Events from 2023-01-01 through 2025-12-01",
+          "Chart uses 2025 events"
+        ],
+        "metric_definitions": {
+          "Added ARR": "Positive event MRR movement multiplied by 12."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    },
+    {
+      "id": "src_churn",
+      "label": "Permanent churn reason query",
+      "path": "sql/08_churn_reasons.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "SELECT\n    churn_reason,\n    COUNT(*) AS churned_customers,\n    SUM(mrr_lost_inr) AS mrr_lost_inr,\n    SUM(mrr_lost_inr) * 12 AS arr_lost_inr,\n    ROUND(AVG(tenure_months), 1) AS avg_tenure_months,\n    ROUND(100.0 * SUM(mrr_lost_inr) / SUM(SUM(mrr_lost_inr)) OVER (), 1) AS lost_arr_mix_pct\nFROM churn\nWHERE churn_date BETWEEN '2023-01-01' AND '2025-12-31'\nGROUP BY churn_reason\nORDER BY arr_lost_inr DESC;\n",
+        "description": "Ranks permanent churn reasons by lost recurring-revenue run-rate.",
+        "tables_used": [
+          "churn"
+        ],
+        "filters": [
+          "Churn dates from 2023-01-01 through 2025-12-31",
+          "Reactivated customers excluded"
+        ],
+        "metric_definitions": {
+          "ARR lost": "MRR lost at permanent churn multiplied by 12."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    }
+  ],
+  "package_info": {
+    "synthetic": true,
+    "snapshot_label": "Deterministic portfolio snapshot through December 2025"
+  }
+}
