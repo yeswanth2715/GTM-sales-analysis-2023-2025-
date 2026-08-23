@@ -1,0 +1,13 @@
+{
+  "synthetic": true,
+  "seed": 20260823,
+  "analysis_start": "2023-01-01",
+  "analysis_end": "2025-12-01",
+  "currency": "INR",
+  "row_counts": {
+    "customers": 529,
+    "products": 2,
+    "revenue": 10453,
+    "churn": 40
+  }
+}

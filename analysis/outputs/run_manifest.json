@@ -1,0 +1,138 @@
+{
+  "01_data_quality": {
+    "sql_file": "sql/01_data_quality.sql",
+    "output_file": "analysis/outputs/01_data_quality.csv",
+    "row_count": 9,
+    "columns": [
+      "check_name",
+      "issue_count"
+    ]
+  },
+  "02_executive_kpis": {
+    "sql_file": "sql/02_executive_kpis.sql",
+    "output_file": "analysis/outputs/02_executive_kpis.csv",
+    "row_count": 1,
+    "columns": [
+      "total_revenue_inr",
+      "ending_mrr_inr",
+      "ending_arr_inr",
+      "ending_active_customers",
+      "new_customers_2025",
+      "new_arr_2025_inr",
+      "expansion_arr_2025_inr",
+      "upgrade_arr_2025_inr",
+      "reactivated_arr_2025_inr",
+      "nrr_2025_pct",
+      "grr_2025_pct",
+      "two_year_mrr_growth_pct"
+    ]
+  },
+  "03_monthly_revenue_growth": {
+    "sql_file": "sql/03_monthly_revenue_growth.sql",
+    "output_file": "analysis/outputs/03_monthly_revenue_growth.csv",
+    "row_count": 36,
+    "columns": [
+      "revenue_month",
+      "recognized_revenue_inr",
+      "ending_mrr_inr",
+      "ending_arr_inr",
+      "active_customers",
+      "new_customers",
+      "expansion_mrr_inr",
+      "upgrade_mrr_inr",
+      "reactivated_mrr_inr",
+      "yoy_mrr_growth_pct"
+    ]
+  },
+  "04_gtm_channel_performance": {
+    "sql_file": "sql/04_gtm_channel_performance.sql",
+    "output_file": "analysis/outputs/04_gtm_channel_performance.csv",
+    "row_count": 5,
+    "columns": [
+      "acquisition_channel",
+      "acquired_customers",
+      "new_customers_2025",
+      "active_customers_dec_2025",
+      "recognized_revenue_36m_inr",
+      "ending_arr_inr",
+      "new_arr_2025_inr",
+      "expansion_arr_2025_inr",
+      "upgrade_arr_2025_inr",
+      "reactivated_arr_2025_inr",
+      "permanently_churned_customers",
+      "observed_logo_churn_pct",
+      "avg_arr_per_active_customer_inr"
+    ]
+  },
+  "05_plan_segment_performance": {
+    "sql_file": "sql/05_plan_segment_performance.sql",
+    "output_file": "analysis/outputs/05_plan_segment_performance.csv",
+    "row_count": 3,
+    "columns": [
+      "plan_tier",
+      "company_segment",
+      "active_customers_dec_2025",
+      "recognized_revenue_36m_inr",
+      "ending_arr_inr",
+      "new_arr_2025_inr",
+      "expansion_arr_2025_inr",
+      "upgrade_arr_2025_inr",
+      "ending_arr_mix_pct"
+    ]
+  },
+  "06_annual_retention": {
+    "sql_file": "sql/06_annual_retention.sql",
+    "output_file": "analysis/outputs/06_annual_retention.csv",
+    "row_count": 2,
+    "columns": [
+      "year",
+      "starting_customers",
+      "retained_customers",
+      "starting_mrr_inr",
+      "ending_mrr_same_cohort_inr",
+      "nrr_pct",
+      "grr_pct",
+      "logo_retention_pct"
+    ]
+  },
+  "07_growth_event_bridge": {
+    "sql_file": "sql/07_growth_event_bridge.sql",
+    "output_file": "analysis/outputs/07_growth_event_bridge.csv",
+    "row_count": 12,
+    "columns": [
+      "year",
+      "revenue_type",
+      "event_count",
+      "added_mrr_inr",
+      "added_arr_inr"
+    ]
+  },
+  "08_churn_reasons": {
+    "sql_file": "sql/08_churn_reasons.sql",
+    "output_file": "analysis/outputs/08_churn_reasons.csv",
+    "row_count": 5,
+    "columns": [
+      "churn_reason",
+      "churned_customers",
+      "mrr_lost_inr",
+      "arr_lost_inr",
+      "avg_tenure_months",
+      "lost_arr_mix_pct"
+    ]
+  },
+  "09_sales_owner_performance": {
+    "sql_file": "sql/09_sales_owner_performance.sql",
+    "output_file": "analysis/outputs/09_sales_owner_performance.csv",
+    "row_count": 7,
+    "columns": [
+      "sales_owner",
+      "managed_customers",
+      "active_customers_dec_2025",
+      "ending_arr_inr",
+      "new_arr_2025_inr",
+      "expansion_upgrade_arr_2025_inr",
+      "upgrade_events",
+      "observed_logo_churn_pct"
+    ]
+  }
+}

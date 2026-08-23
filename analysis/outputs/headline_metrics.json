@@ -1,0 +1,21 @@
+{
+  "total_revenue_inr": 2547980000,
+  "ending_mrr_inr": 125770000,
+  "ending_arr_inr": 1509240000,
+  "ending_active_customers": 489,
+  "new_customers_2025": 163,
+  "new_arr_2025_inr": 465720000,
+  "expansion_arr_2025_inr": 39540000,
+  "upgrade_arr_2025_inr": 33720000,
+  "reactivated_arr_2025_inr": 46740000,
+  "nrr_2025_pct": 100.7,
+  "grr_2025_pct": 94.4,
+  "two_year_mrr_growth_pct": 152.6,
+  "top_channel_by_ending_arr": "Partner",
+  "top_channel_ending_arr_inr": 395160000,
+  "lowest_churn_channel": "Referral",
+  "highest_churn_channel": "Outbound",
+  "nrr_2024_pct": 100.2,
+  "top_churn_reason": "Missing Integration",
+  "top_churn_reason_arr_lost_inr": 35700000
+}

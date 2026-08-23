@@ -1,0 +1,6 @@
+churn_reason,churned_customers,mrr_lost_inr,arr_lost_inr,avg_tenure_months,lost_arr_mix_pct
+Missing Integration,14,2975000,35700000,17.6,31.3
+Low Adoption,11,2795000,33540000,15.1,29.5
+Budget Cuts,8,2195000,26340000,19.3,23.1
+Vendor Consolidation,5,825000,9900000,14.8,8.7
+Implementation Complexity,2,700000,8400000,11.5,7.4
