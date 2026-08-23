@@ -1,0 +1,3 @@
+company_segment,starting_plan_tier,acquired_customers,permanently_churned_customers,observed_logo_churn_pct,active_customers_dec_2025,ending_arr_inr,permanent_churn_arr_lost_inr,avg_arr_per_active_customer_inr
+Mid-Market,Professional,301,25,8.3,276,517740000,46800000,1875870.0
+Large Enterprise,Enterprise,228,15,6.6,213,991500000,67080000,4654930.0

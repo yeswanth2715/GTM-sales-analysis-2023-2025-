@@ -37,15 +37,25 @@ Use the same starting cohort, but cap each customer’s ending MRR at its starti
 
 Observed logo churn is permanent churned customers divided by all customers attributed to the channel in the modeled history. Because customer exposure periods differ, this is a descriptive portfolio ratio rather than an annualized rate.
 
+### Segment churn
+
+Segment churn uses permanent churned customers divided by all acquired customers in each company-segment and starting-plan group. Starting plan is fixed at acquisition so an upgrade does not move the customer into a different denominator after the fact. As with channel churn, this is a descriptive full-history portfolio ratio rather than an annualized rate.
+
+### Customer flow and growth quality
+
+Monthly customer flow reports new customers, reactivations, permanent churn, and the actual change in active customers. The active-customer change may differ from new customers minus permanent churn because temporary suspensions and reactivations affect whether a customer has revenue in a month.
+
+Growth quality compares year-over-year ARR growth with year-over-year active-customer growth and average ARR per active customer. This separates scale created by a larger customer base from scale created by customer mix, expansion, upgrades, and reactivation. A positive growth rate can still be decelerating when the rate declines versus the prior year.
+
 ## Analytical workflow
 
 1. Generate four CSV tables and rebuild the SQLite database.
 2. Enforce primary keys, foreign keys, uniqueness, check constraints, and indexes.
 3. Run zero-tolerance data-quality checks.
-4. Execute nine reviewed SQL analyses and export every result to CSV.
+4. Execute twelve reviewed SQL analyses and export every result to CSV.
 5. Build visuals only from exported query results.
 6. Recompute headline metrics independently during validation.
 
 ## Caveats
 
-The model is useful for demonstrating SQL, KPI design, and business reasoning. It does not estimate causal channel performance, and it lacks lead, opportunity, activity, quota, and spend tables required for funnel efficiency or CAC analysis.
+The model is useful for demonstrating SQL, KPI design, and business reasoning. It does not estimate causal channel or segment performance. Channel and segment churn groups have unequal exposure time, and the model lacks lead, opportunity, activity, quota, and spend tables required for funnel efficiency or CAC analysis.

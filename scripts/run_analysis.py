@@ -67,6 +67,12 @@ def main() -> None:
         churn_reasons = [dict(row) for row in connection.execute(
             (sql_dir / "08_churn_reasons.sql").read_text(encoding="utf-8")
         ).fetchall()]
+        segment_churn = [dict(row) for row in connection.execute(
+            (sql_dir / "11_segment_churn_retention.sql").read_text(encoding="utf-8")
+        ).fetchall()]
+        growth_quality = [dict(row) for row in connection.execute(
+            (sql_dir / "12_growth_quality_diagnostic.sql").read_text(encoding="utf-8")
+        ).fetchall()]
 
         metrics["top_channel_by_ending_arr"] = channels[0]["acquisition_channel"]
         metrics["top_channel_ending_arr_inr"] = channels[0]["ending_arr_inr"]
@@ -75,6 +81,14 @@ def main() -> None:
         metrics["nrr_2024_pct"] = retention[0]["nrr_pct"]
         metrics["top_churn_reason"] = churn_reasons[0]["churn_reason"]
         metrics["top_churn_reason_arr_lost_inr"] = churn_reasons[0]["arr_lost_inr"]
+        metrics["highest_churn_segment"] = segment_churn[0]["company_segment"]
+        metrics["highest_churn_segment_starting_plan"] = segment_churn[0]["starting_plan_tier"]
+        metrics["highest_segment_observed_logo_churn_pct"] = segment_churn[0]["observed_logo_churn_pct"]
+        metrics["arr_growth_2024_pct"] = growth_quality[1]["yoy_arr_growth_pct"]
+        metrics["arr_growth_2025_pct"] = growth_quality[2]["yoy_arr_growth_pct"]
+        metrics["active_customer_growth_2025_pct"] = growth_quality[2]["yoy_active_customer_growth_pct"]
+        metrics["avg_arr_per_customer_growth_2025_pct"] = growth_quality[2]["yoy_avg_arr_per_customer_growth_pct"]
+        metrics["permanently_churned_customers_2025"] = growth_quality[2]["permanently_churned_customers"]
 
         (output_dir / "headline_metrics.json").write_text(
             json.dumps(metrics, indent=2) + "\n", encoding="utf-8"

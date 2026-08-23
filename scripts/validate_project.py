@@ -147,8 +147,33 @@ def main() -> None:
     report_html = root / "report" / "report.html"
     add(checks, "Portable report package exists", report_html.exists() and report_html.stat().st_size > 100_000, f"report.html size: {report_html.stat().st_size if report_html.exists() else 0:,} bytes", "Medium")
 
+    with (output_dir / "10_monthly_customer_growth_churn.csv").open(newline="", encoding="utf-8") as handle:
+        customer_flow = list(csv.DictReader(handle))
+    flow_2025 = [row for row in customer_flow if row["revenue_month"].startswith("2025-")]
+    new_2025 = sum(int(row["new_customers"]) for row in flow_2025)
+    churn_2025 = sum(int(row["permanently_churned_customers"]) for row in flow_2025)
+    nonnegative_months = all(not row["net_active_customer_change"] or int(row["net_active_customer_change"]) >= 0 for row in customer_flow)
+    add(checks, "Monthly customer-flow logic", (new_2025, churn_2025, nonnegative_months) == (163, 27, True), f"2025 new={new_2025}; permanent churn={churn_2025}; all monthly net changes nonnegative={nonnegative_months}")
+
+    with (output_dir / "11_segment_churn_retention.csv").open(newline="", encoding="utf-8") as handle:
+        segment_rows = list(csv.DictReader(handle))
+    segment_acquired = sum(int(row["acquired_customers"]) for row in segment_rows)
+    segment_churned = sum(int(row["permanently_churned_customers"]) for row in segment_rows)
+    segment_arr = sum(int(row["ending_arr_inr"]) for row in segment_rows)
+    add(checks, "Segment churn subtotals reconcile", (segment_acquired, segment_churned, segment_arr) == (529, 40, 1509240000), f"Acquired={segment_acquired}; churned={segment_churned}; ending ARR={segment_arr:,}")
+
+    with (output_dir / "12_growth_quality_diagnostic.csv").open(newline="", encoding="utf-8") as handle:
+        growth_rows = {row["year"]: row for row in csv.DictReader(handle)}
+    growth_values = (
+        float(growth_rows["2024"]["yoy_arr_growth_pct"]),
+        float(growth_rows["2025"]["yoy_arr_growth_pct"]),
+        float(growth_rows["2025"]["yoy_active_customer_growth_pct"]),
+        float(growth_rows["2025"]["yoy_avg_arr_per_customer_growth_pct"]),
+    )
+    add(checks, "Growth-quality metrics reconcile", growth_values == (71.0, 47.7, 41.3, 4.5), f"2024 ARR={growth_values[0]}%; 2025 ARR={growth_values[1]}%; customers={growth_values[2]}%; ARR/customer={growth_values[3]}%")
+
     readme = (root / "README.md").read_text(encoding="utf-8")
-    required_claims = ["₹150.9 crore", "100.7% NRR", "94.4%", "14.1%", "₹12.0 crore"]
+    required_claims = ["₹150.9 crore", "100.7% NRR", "94.4%", "14.1%", "₹12.0 crore", "47.7%", "41.3%", "8.3%"]
     missing_claims = [claim for claim in required_claims if claim not in readme]
     add(checks, "README headline claims match reviewed outputs", not missing_claims, f"Missing expected claims: {missing_claims or 'none'}", "Medium")
 

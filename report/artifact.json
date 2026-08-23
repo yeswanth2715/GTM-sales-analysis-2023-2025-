@@ -4,7 +4,7 @@
     "version": 1,
     "surface": "report",
     "title": "B2B SaaS Revenue Growth & GTM Performance",
-    "description": "A decision-ready analysis of recurring-revenue growth, acquisition-channel quality, post-sale expansion, and permanent churn in a fictional B2B SaaS CRM.",
+    "description": "A decision-ready analysis of recurring-revenue growth quality, customer additions and churn, segment retention, acquisition-channel quality, and post-sale expansion in a fictional B2B SaaS CRM.",
     "generatedAt": "2026-08-23T16:30:00Z",
     "sources": [
       {
@@ -119,6 +119,82 @@
           },
           "executed_at": "2026-08-23T16:30:00Z"
         }
+      },
+      {
+        "id": "src_customer_flow",
+        "label": "Monthly customer growth and churn query",
+        "path": "sql/10_monthly_customer_growth_churn.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "WITH months AS (\n    SELECT DISTINCT revenue_month\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n),\nmonthly_revenue AS (\n    SELECT\n        revenue_month,\n        COUNT(DISTINCT customer_id) AS active_customers,\n        SUM(arr_run_rate_inr) AS ending_arr_inr,\n        SUM(CASE WHEN revenue_type = 'New' THEN 1 ELSE 0 END) AS new_customers,\n        SUM(CASE WHEN revenue_type = 'Reactivation' THEN 1 ELSE 0 END) AS reactivated_customers\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY revenue_month\n),\nmonthly_churn AS (\n    SELECT\n        substr(churn_date, 1, 7) || '-01' AS revenue_month,\n        COUNT(*) AS permanently_churned_customers,\n        SUM(mrr_lost_inr) * 12 AS permanent_churn_arr_lost_inr\n    FROM churn\n    WHERE churn_date BETWEEN '2023-01-01' AND '2025-12-31'\n    GROUP BY substr(churn_date, 1, 7) || '-01'\n),\ncombined AS (\n    SELECT\n        m.revenue_month,\n        r.active_customers,\n        r.ending_arr_inr,\n        r.new_customers,\n        r.reactivated_customers,\n        COALESCE(c.permanently_churned_customers, 0) AS permanently_churned_customers,\n        COALESCE(c.permanent_churn_arr_lost_inr, 0) AS permanent_churn_arr_lost_inr\n    FROM months m\n    JOIN monthly_revenue r USING (revenue_month)\n    LEFT JOIN monthly_churn c USING (revenue_month)\n),\nwith_comparisons AS (\n    SELECT\n        *,\n        LAG(active_customers) OVER (ORDER BY revenue_month) AS prior_month_active_customers,\n        LAG(ending_arr_inr) OVER (ORDER BY revenue_month) AS prior_month_arr_inr,\n        LAG(active_customers, 12) OVER (ORDER BY revenue_month) AS prior_year_active_customers,\n        LAG(ending_arr_inr, 12) OVER (ORDER BY revenue_month) AS prior_year_arr_inr\n    FROM combined\n)\nSELECT\n    revenue_month,\n    active_customers,\n    new_customers,\n    reactivated_customers,\n    permanently_churned_customers,\n    new_customers - permanently_churned_customers AS net_new_minus_permanent_churn,\n    active_customers - prior_month_active_customers AS net_active_customer_change,\n    ending_arr_inr,\n    ROUND(1.0 * ending_arr_inr / NULLIF(active_customers, 0), 0) AS avg_arr_per_active_customer_inr,\n    permanent_churn_arr_lost_inr,\n    ROUND(100.0 * (ending_arr_inr - prior_year_arr_inr) / NULLIF(prior_year_arr_inr, 0), 1) AS yoy_arr_growth_pct,\n    ROUND(100.0 * (active_customers - prior_year_active_customers) / NULLIF(prior_year_active_customers, 0), 1) AS yoy_active_customer_growth_pct\nFROM with_comparisons\nORDER BY revenue_month;\n",
+          "description": "Compares monthly customer acquisition, reactivation, permanent churn, active-customer movement, ARR, and average ARR per active customer.",
+          "tables_used": [
+            "revenue",
+            "churn"
+          ],
+          "filters": [
+            "Revenue months from 2023-01-01 through 2025-12-01",
+            "Permanent churn is grouped to calendar month"
+          ],
+          "metric_definitions": {
+            "Net active customer change": "Current month active customers minus prior month active customers.",
+            "YoY ARR growth": "Ending ARR change versus the same month one year earlier.",
+            "YoY active-customer growth": "Active-customer change versus the same month one year earlier."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
+      },
+      {
+        "id": "src_segment_churn",
+        "label": "Segment churn and retention query",
+        "path": "sql/11_segment_churn_retention.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "WITH customer_portfolio AS (\n    SELECT\n        c.customer_id,\n        c.company_segment,\n        p.plan_tier AS starting_plan_tier,\n        c.lifecycle_status,\n        COALESCE(ch.mrr_lost_inr * 12, 0) AS permanent_churn_arr_lost_inr,\n        COALESCE(SUM(CASE WHEN r.revenue_month = '2025-12-01' THEN r.arr_run_rate_inr ELSE 0 END), 0) AS ending_arr_inr\n    FROM customers c\n    JOIN products p ON p.product_id = c.initial_product_id\n    LEFT JOIN churn ch ON ch.customer_id = c.customer_id\n    LEFT JOIN revenue r ON r.customer_id = c.customer_id\n    GROUP BY\n        c.customer_id,\n        c.company_segment,\n        p.plan_tier,\n        c.lifecycle_status,\n        ch.mrr_lost_inr\n)\nSELECT\n    company_segment,\n    starting_plan_tier,\n    COUNT(*) AS acquired_customers,\n    SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END) AS permanently_churned_customers,\n    ROUND(\n        100.0 * SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END)\n        / NULLIF(COUNT(*), 0),\n        1\n    ) AS observed_logo_churn_pct,\n    SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END) AS active_customers_dec_2025,\n    SUM(ending_arr_inr) AS ending_arr_inr,\n    SUM(permanent_churn_arr_lost_inr) AS permanent_churn_arr_lost_inr,\n    ROUND(\n        1.0 * SUM(ending_arr_inr)\n        / NULLIF(SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END), 0),\n        0\n    ) AS avg_arr_per_active_customer_inr\nFROM customer_portfolio\nGROUP BY company_segment, starting_plan_tier\nORDER BY observed_logo_churn_pct DESC, ending_arr_inr DESC;\n",
+          "description": "Compares permanent logo churn, ending ARR, and ARR lost across customer segments and starting plans.",
+          "tables_used": [
+            "customers",
+            "products",
+            "revenue",
+            "churn"
+          ],
+          "filters": [
+            "Ending ARR is measured at 2025-12-01",
+            "Plan tier is the customer's starting plan",
+            "Permanent churn is observed over the full modeled history"
+          ],
+          "metric_definitions": {
+            "Observed segment logo churn": "Permanently churned customers divided by all acquired customers in the segment and starting-plan group; not annualized."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
+      },
+      {
+        "id": "src_growth_quality",
+        "label": "Annual growth quality diagnostic",
+        "path": "sql/12_growth_quality_diagnostic.sql",
+        "query": {
+          "language": "sql",
+          "engine": "SQLite",
+          "sql": "WITH year_end AS (\n    SELECT\n        CAST(substr(revenue_month, 1, 4) AS INTEGER) AS year,\n        SUM(arr_run_rate_inr) AS ending_arr_inr,\n        COUNT(DISTINCT customer_id) AS active_customers,\n        ROUND(1.0 * SUM(arr_run_rate_inr) / COUNT(DISTINCT customer_id), 0) AS avg_arr_per_active_customer_inr\n    FROM revenue\n    WHERE substr(revenue_month, 6, 5) = '12-01'\n      AND revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY CAST(substr(revenue_month, 1, 4) AS INTEGER)\n),\nannual_new_and_post_sale AS (\n    SELECT\n        CAST(substr(revenue_month, 1, 4) AS INTEGER) AS year,\n        SUM(CASE WHEN revenue_type = 'New' THEN 1 ELSE 0 END) AS new_customers,\n        SUM(\n            CASE WHEN revenue_type IN ('Expansion', 'Upgrade', 'Reactivation')\n                 THEN movement_mrr_inr * 12 ELSE 0 END\n        ) AS post_sale_added_arr_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY CAST(substr(revenue_month, 1, 4) AS INTEGER)\n),\nannual_churn AS (\n    SELECT\n        CAST(substr(churn_date, 1, 4) AS INTEGER) AS year,\n        COUNT(*) AS permanently_churned_customers,\n        SUM(mrr_lost_inr) * 12 AS permanent_churn_arr_lost_inr\n    FROM churn\n    WHERE churn_date BETWEEN '2023-01-01' AND '2025-12-31'\n    GROUP BY CAST(substr(churn_date, 1, 4) AS INTEGER)\n),\nannual AS (\n    SELECT\n        y.year,\n        y.ending_arr_inr,\n        y.active_customers,\n        y.avg_arr_per_active_customer_inr,\n        n.new_customers,\n        COALESCE(c.permanently_churned_customers, 0) AS permanently_churned_customers,\n        n.new_customers - COALESCE(c.permanently_churned_customers, 0) AS net_new_minus_permanent_churn,\n        n.post_sale_added_arr_inr,\n        COALESCE(c.permanent_churn_arr_lost_inr, 0) AS permanent_churn_arr_lost_inr,\n        LAG(y.ending_arr_inr) OVER (ORDER BY y.year) AS prior_year_arr_inr,\n        LAG(y.active_customers) OVER (ORDER BY y.year) AS prior_year_active_customers,\n        LAG(y.avg_arr_per_active_customer_inr) OVER (ORDER BY y.year) AS prior_year_avg_arr_inr\n    FROM year_end y\n    JOIN annual_new_and_post_sale n USING (year)\n    LEFT JOIN annual_churn c USING (year)\n)\nSELECT\n    year,\n    ending_arr_inr,\n    active_customers,\n    avg_arr_per_active_customer_inr,\n    new_customers,\n    permanently_churned_customers,\n    net_new_minus_permanent_churn,\n    post_sale_added_arr_inr,\n    permanent_churn_arr_lost_inr,\n    ROUND(100.0 * (ending_arr_inr - prior_year_arr_inr) / NULLIF(prior_year_arr_inr, 0), 1) AS yoy_arr_growth_pct,\n    ROUND(100.0 * (active_customers - prior_year_active_customers) / NULLIF(prior_year_active_customers, 0), 1) AS yoy_active_customer_growth_pct,\n    ROUND(\n        100.0 * (avg_arr_per_active_customer_inr - prior_year_avg_arr_inr)\n        / NULLIF(prior_year_avg_arr_inr, 0),\n        1\n    ) AS yoy_avg_arr_per_customer_growth_pct,\n    ROUND(\n        100.0 * (ending_arr_inr - prior_year_arr_inr) / NULLIF(prior_year_arr_inr, 0)\n        - 100.0 * (active_customers - prior_year_active_customers) / NULLIF(prior_year_active_customers, 0),\n        1\n    ) AS arr_growth_minus_customer_growth_pp\nFROM annual\nORDER BY year;\n",
+          "description": "Separates annual ARR growth into active-customer growth and average ARR per active customer while retaining acquisition, churn, and post-sale growth context.",
+          "tables_used": [
+            "revenue",
+            "churn"
+          ],
+          "filters": [
+            "Calendar years 2023 through 2025",
+            "Year-end metrics use each December"
+          ],
+          "metric_definitions": {
+            "YoY ARR growth": "December ending ARR change versus the previous December.",
+            "YoY active-customer growth": "December active-customer change versus the previous December.",
+            "Average ARR per active customer": "December ending ARR divided by December active customers."
+          },
+          "executed_at": "2026-08-23T16:30:00Z"
+        }
       }
     ],
     "cards": [
@@ -169,6 +245,39 @@
           {
             "label": "GRR",
             "field": "grr_2025_rate",
+            "format": "percent"
+          }
+        ]
+      },
+      {
+        "id": "card_arr_growth",
+        "description": "Year-over-year ending ARR growth slowed in 2025 while remaining positive.",
+        "dataset": "kpis",
+        "sourceId": "src_growth_quality",
+        "metrics": [
+          {
+            "label": "2025 ARR growth",
+            "field": "arr_growth_2025_rate",
+            "format": "percent",
+            "signed": true
+          },
+          {
+            "label": "2024 ARR growth",
+            "field": "arr_growth_2024_rate",
+            "format": "percent",
+            "signed": true
+          }
+        ]
+      },
+      {
+        "id": "card_segment_churn",
+        "description": "Mid-Market customers starting on Professional had the higher observed permanent logo churn.",
+        "dataset": "kpis",
+        "sourceId": "src_segment_churn",
+        "metrics": [
+          {
+            "label": "Highest segment churn",
+            "field": "highest_segment_churn_rate",
             "format": "percent"
           }
         ]
@@ -286,6 +395,113 @@
             "show": false
           }
         }
+      },
+      {
+        "id": "chart_growth_rates",
+        "title": "Year-over-year ARR and active-customer growth",
+        "description": "Monthly year-over-year rates from January 2024 through December 2025.",
+        "type": "line",
+        "dataset": "growth_rate_comparison",
+        "sourceId": "src_customer_flow",
+        "encodings": {
+          "x": {
+            "field": "revenue_month",
+            "type": "temporal",
+            "title": "Month"
+          },
+          "y": {
+            "field": "yoy_growth_rate",
+            "type": "quantitative",
+            "title": "Year-over-year growth"
+          },
+          "color": {
+            "field": "growth_series",
+            "type": "nominal",
+            "title": "Growth measure"
+          }
+        },
+        "options": {
+          "legend": {
+            "show": true
+          },
+          "palette": {
+            "kind": "categorical",
+            "colors": [
+              "#2563EB",
+              "#D9A441"
+            ]
+          }
+        }
+      },
+      {
+        "id": "chart_logo_flow",
+        "title": "Monthly new customers and permanent churn",
+        "description": "Logo flows from January 2023 through December 2025; temporary suspensions are not permanent churn.",
+        "type": "line",
+        "dataset": "monthly_logo_flow",
+        "sourceId": "src_customer_flow",
+        "encodings": {
+          "x": {
+            "field": "revenue_month",
+            "type": "temporal",
+            "title": "Month"
+          },
+          "y": {
+            "field": "customer_count",
+            "type": "quantitative",
+            "title": "Customers"
+          },
+          "color": {
+            "field": "flow_type",
+            "type": "nominal",
+            "title": "Customer flow"
+          }
+        },
+        "options": {
+          "legend": {
+            "show": true
+          },
+          "palette": {
+            "kind": "categorical",
+            "colors": [
+              "#2563EB",
+              "#C45C88"
+            ]
+          }
+        }
+      },
+      {
+        "id": "chart_segment_churn",
+        "title": "Observed permanent logo churn by customer segment",
+        "description": "Full modeled history; denominator is all acquired customers in each segment and starting-plan group.",
+        "type": "bar",
+        "dataset": "segment_churn",
+        "sourceId": "src_segment_churn",
+        "encodings": {
+          "x": {
+            "field": "company_segment",
+            "type": "nominal",
+            "title": "Customer segment"
+          },
+          "y": {
+            "field": "observed_logo_churn_rate",
+            "type": "quantitative",
+            "title": "Observed logo churn"
+          }
+        },
+        "options": {
+          "orientation": "vertical",
+          "grouping": "grouped",
+          "legend": {
+            "show": false
+          },
+          "palette": {
+            "kind": "single",
+            "colors": [
+              "#C45C88"
+            ]
+          }
+        }
       }
     ],
     "tables": [
@@ -332,6 +548,111 @@
           "field": "ending_arr_crore",
           "direction": "desc"
         }
+      },
+      {
+        "id": "table_segment_churn",
+        "title": "Customer segment churn detail",
+        "description": "Permanent churn and December 2025 portfolio scale by segment and starting plan.",
+        "dataset": "segment_churn",
+        "sourceId": "src_segment_churn",
+        "columns": [
+          {
+            "field": "company_segment",
+            "label": "Segment"
+          },
+          {
+            "field": "starting_plan_tier",
+            "label": "Starting plan"
+          },
+          {
+            "field": "acquired_customers",
+            "label": "Acquired customers",
+            "format": "number"
+          },
+          {
+            "field": "permanently_churned_customers",
+            "label": "Permanent churn",
+            "format": "number"
+          },
+          {
+            "field": "observed_logo_churn_rate",
+            "label": "Observed logo churn",
+            "format": "percent"
+          },
+          {
+            "field": "ending_arr_crore",
+            "label": "Ending ARR",
+            "format": "number",
+            "unit": "\u20b9 crore"
+          },
+          {
+            "field": "permanent_churn_arr_lost_crore",
+            "label": "ARR lost",
+            "format": "number",
+            "unit": "\u20b9 crore"
+          }
+        ],
+        "defaultSort": {
+          "field": "observed_logo_churn_rate",
+          "direction": "desc"
+        }
+      },
+      {
+        "id": "table_growth_quality",
+        "title": "Annual growth quality detail",
+        "description": "Year-end scale, customer growth, churn, and post-sale contribution from 2023 through 2025.",
+        "dataset": "growth_quality",
+        "sourceId": "src_growth_quality",
+        "columns": [
+          {
+            "field": "year",
+            "label": "Year",
+            "format": "number"
+          },
+          {
+            "field": "ending_arr_crore",
+            "label": "Ending ARR",
+            "format": "number",
+            "unit": "\u20b9 crore"
+          },
+          {
+            "field": "active_customers",
+            "label": "Active customers",
+            "format": "number"
+          },
+          {
+            "field": "new_customers",
+            "label": "New customers",
+            "format": "number"
+          },
+          {
+            "field": "permanently_churned_customers",
+            "label": "Permanent churn",
+            "format": "number"
+          },
+          {
+            "field": "yoy_arr_growth_rate",
+            "label": "YoY ARR growth",
+            "format": "percent",
+            "movement": true
+          },
+          {
+            "field": "yoy_active_customer_growth_rate",
+            "label": "YoY customer growth",
+            "format": "percent",
+            "movement": true
+          },
+          {
+            "field": "yoy_avg_arr_per_customer_growth_rate",
+            "label": "YoY avg ARR/customer growth",
+            "format": "percent",
+            "movement": true
+          }
+        ],
+        "defaultSort": {
+          "field": "year",
+          "direction": "asc"
+        }
       }
     ],
     "blocks": [
@@ -343,8 +664,7 @@
       {
         "id": "executive_summary",
         "type": "markdown",
-        "sourceId": "src_kpis",
-        "body": "## Executive Summary\n\n- **Recurring revenue grew strongly.** Ending ARR reached \u20b9150.9 crore in December 2025, 152.6% above the December 2023 MRR run-rate.\n- **Retention is healthy but must be read with gross losses.** The 2025 starting cohort ended at 100.7% NRR and 94.4% GRR.\n- **Post-sale motions matter.** Expansion, upgrades, and reactivation added \u20b912.0 crore of ARR during 2025.\n- **GTM quality is uneven.** Partner leads ending ARR, while Outbound reached similar scale with materially higher observed churn."
+        "body": "## Executive Summary\n\n- **The business is still growing, but momentum is slowing.** Year-over-year ARR growth fell from 71.0% in 2024 to 47.7% in 2025; active-customer growth also slowed to 41.3%.\n- **Customer count did not decline.** Active customers rose every observed month and finished at 489, while 2025 added 163 new customers and recorded 27 permanent churns.\n- **Growth is not only a logo-volume story.** Average ARR per active customer increased 4.5% in 2025, and expansion, upgrades, and reactivation added \u20b912.0 crore.\n- **Churn risk differs by segment and channel.** Mid-Market customers starting on Professional had 8.3% observed permanent logo churn versus 6.6% for Large Enterprise; Outbound remained the highest-churn channel."
       },
       {
         "id": "headline_metrics",
@@ -352,7 +672,9 @@
         "cardIds": [
           "card_ending_arr",
           "card_active_customers",
-          "card_nrr"
+          "card_nrr",
+          "card_arr_growth",
+          "card_segment_churn"
         ]
       },
       {
@@ -365,6 +687,49 @@
         "id": "growth_chart",
         "type": "chart",
         "chartId": "chart_monthly_arr"
+      },
+      {
+        "id": "growth_quality_heading",
+        "type": "markdown",
+        "sourceId": "src_customer_flow",
+        "body": "## Growth remains positive, but both revenue and customer momentum are decelerating\n\nARR grew faster than the active-customer base throughout the comparable period, showing that customer mix, expansion, upgrades, and reactivation supported growth beyond logo acquisition. However, year-over-year ARR growth declined from 71.0% at December 2024 to 47.7% at December 2025, while active-customer growth declined from 60.2% to 41.3%. **So what:** leaders should not confuse a rising ARR line with accelerating growth; the correct operating question is whether acquisition and post-sale expansion can sustain momentum as the base becomes larger."
+      },
+      {
+        "id": "growth_rate_chart",
+        "type": "chart",
+        "chartId": "chart_growth_rates"
+      },
+      {
+        "id": "growth_quality_table",
+        "type": "table",
+        "tableId": "table_growth_quality"
+      },
+      {
+        "id": "customer_flow_heading",
+        "type": "markdown",
+        "sourceId": "src_customer_flow",
+        "body": "## New customer additions remained above permanent churn every month\n\nThe active-customer base increased in every observed month. In 2025, 163 new customers entered the portfolio and 27 customers permanently churned; monthly permanent churn peaked at four customers while new additions ranged from 11 to 16. **So what:** there is no current logo-contraction signal in this synthetic scenario, but the higher 2025 churn volume should be monitored because absolute churn naturally becomes more material as the installed base grows."
+      },
+      {
+        "id": "logo_flow_chart",
+        "type": "chart",
+        "chartId": "chart_logo_flow"
+      },
+      {
+        "id": "segment_churn_heading",
+        "type": "markdown",
+        "sourceId": "src_segment_churn",
+        "body": "## Mid-Market customers show the higher permanent logo-churn rate\n\nMid-Market customers starting on Professional recorded 25 permanent churns from 301 acquired customers, an observed rate of 8.3%. Large Enterprise customers starting on Enterprise recorded 15 churns from 228 customers, or 6.6%. Large Enterprise still lost more ARR\u2014\u20b96.7 crore versus \u20b94.7 crore\u2014because each account carried more value. **So what:** Mid-Market needs broader logo-retention controls, while Enterprise needs high-touch prevention for fewer but more financially material losses."
+      },
+      {
+        "id": "segment_churn_chart",
+        "type": "chart",
+        "chartId": "chart_segment_churn"
+      },
+      {
+        "id": "segment_churn_table",
+        "type": "table",
+        "tableId": "table_segment_churn"
       },
       {
         "id": "channel_heading",
@@ -407,17 +772,17 @@
       {
         "id": "recommendations",
         "type": "markdown",
-        "body": "## Recommended next steps\n\n1. Prioritize Partner and Events for Enterprise acquisition while adding real pipeline and spend data before reallocating budget.\n2. Tighten Outbound qualification around integration requirements and implementation readiness.\n3. Instrument onboarding and integration activation in the first six months.\n4. Build a Professional-to-Enterprise upgrade signal using seat and integration growth.\n5. Review NRR beside GRR and permanent-churn reasons each month."
+        "body": "## Recommended next steps\n\n1. Add a monthly growth-quality review that tracks ARR growth, active-customer growth, average ARR per customer, new logos, permanent churn, NRR, and GRR together.\n2. Build a Mid-Market retention playbook focused on early adoption and integration activation, while using high-touch intervention for high-value Enterprise risks.\n3. Tighten Outbound qualification around integration requirements and implementation readiness.\n4. Preserve Partner and Events as priority Enterprise acquisition channels while adding real pipeline and spend data before reallocating budget.\n5. Build a Professional-to-Enterprise upgrade signal using seat and integration growth."
       },
       {
         "id": "further_questions",
         "type": "markdown",
-        "body": "## Further questions\n\n- Does channel quality remain after normalizing for customer tenure, industry, and initial contract size?\n- Which onboarding milestones best predict permanent churn versus temporary suspension?\n- How do CAC, payback, sales-cycle length, and win rate change the channel recommendation?"
+        "body": "## Further questions\n\n- Does segment churn remain different after normalizing for tenure, industry, contract size, and acquisition channel?\n- Which onboarding milestones best predict permanent churn versus temporary suspension?\n- How much of average ARR-per-customer growth comes from expansion versus plan upgrades?\n- How do lead volume, win rate, CAC, payback, and sales-cycle length change the channel recommendation?"
       },
       {
         "id": "caveats",
         "type": "markdown",
-        "body": "## Caveats and assumptions\n\nThis report uses deterministic synthetic data. ARR is a modeled MRR run-rate, not audited revenue. Channel comparisons are descriptive and have different exposure periods. Funnel, CAC, quota, and sales-cycle metrics are out of scope because the four-table model has no lead, opportunity, activity, marketing-spend, or quota facts."
+        "body": "## Caveats and assumptions\n\nThis report uses deterministic synthetic data. ARR is a modeled MRR run-rate, not audited revenue. Segment and channel churn rates are descriptive full-history portfolio ratios with unequal exposure time, not annualized churn rates. Starting plan is used for the segment denominator so upgrades do not redefine the original cohort. Funnel, CAC, quota, and sales-cycle metrics remain out of scope because the four-table model has no lead, opportunity, activity, marketing-spend, or quota facts."
       }
     ]
   },
@@ -432,7 +797,11 @@
           "ending_active_customers": 489,
           "nrr_2025_rate": 1.0070000000000001,
           "grr_2025_rate": 0.9440000000000001,
-          "two_year_mrr_growth_rate": 1.526
+          "two_year_mrr_growth_rate": 1.526,
+          "arr_growth_2025_rate": 0.47700000000000004,
+          "arr_growth_2024_rate": 0.71,
+          "active_customer_growth_2025_rate": 0.413,
+          "highest_segment_churn_rate": 0.083
         }
       ],
       "monthly_growth": [
@@ -834,6 +1203,819 @@
           "lost_arr_mix_rate": 0.07400000000000001,
           "avg_tenure_months": 11.5
         }
+      ],
+      "monthly_logo_flow": [
+        {
+          "revenue_month": "2023-01-01",
+          "flow_type": "New customers",
+          "customer_count": 8,
+          "active_customers": 104,
+          "net_active_customer_change": null
+        },
+        {
+          "revenue_month": "2023-01-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 104,
+          "net_active_customer_change": null
+        },
+        {
+          "revenue_month": "2023-02-01",
+          "flow_type": "New customers",
+          "customer_count": 10,
+          "active_customers": 114,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-02-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 114,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-03-01",
+          "flow_type": "New customers",
+          "customer_count": 12,
+          "active_customers": 125,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2023-03-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 125,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2023-04-01",
+          "flow_type": "New customers",
+          "customer_count": 10,
+          "active_customers": 133,
+          "net_active_customer_change": 8
+        },
+        {
+          "revenue_month": "2023-04-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 2,
+          "active_customers": 133,
+          "net_active_customer_change": 8
+        },
+        {
+          "revenue_month": "2023-05-01",
+          "flow_type": "New customers",
+          "customer_count": 10,
+          "active_customers": 143,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-05-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 143,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-06-01",
+          "flow_type": "New customers",
+          "customer_count": 11,
+          "active_customers": 154,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2023-06-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 154,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2023-07-01",
+          "flow_type": "New customers",
+          "customer_count": 10,
+          "active_customers": 164,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-07-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 164,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-08-01",
+          "flow_type": "New customers",
+          "customer_count": 10,
+          "active_customers": 174,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-08-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 174,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2023-09-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 186,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2023-09-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 186,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2023-10-01",
+          "flow_type": "New customers",
+          "customer_count": 12,
+          "active_customers": 198,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2023-10-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 198,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2023-11-01",
+          "flow_type": "New customers",
+          "customer_count": 11,
+          "active_customers": 207,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2023-11-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 207,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2023-12-01",
+          "flow_type": "New customers",
+          "customer_count": 10,
+          "active_customers": 216,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2023-12-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 216,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2024-01-01",
+          "flow_type": "New customers",
+          "customer_count": 9,
+          "active_customers": 224,
+          "net_active_customer_change": 8
+        },
+        {
+          "revenue_month": "2024-01-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 224,
+          "net_active_customer_change": 8
+        },
+        {
+          "revenue_month": "2024-02-01",
+          "flow_type": "New customers",
+          "customer_count": 11,
+          "active_customers": 236,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2024-02-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 236,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2024-03-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 250,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2024-03-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 250,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2024-04-01",
+          "flow_type": "New customers",
+          "customer_count": 11,
+          "active_customers": 260,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2024-04-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 260,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2024-05-01",
+          "flow_type": "New customers",
+          "customer_count": 12,
+          "active_customers": 269,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2024-05-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 2,
+          "active_customers": 269,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2024-06-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 283,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2024-06-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 283,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2024-07-01",
+          "flow_type": "New customers",
+          "customer_count": 12,
+          "active_customers": 294,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2024-07-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 294,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2024-08-01",
+          "flow_type": "New customers",
+          "customer_count": 12,
+          "active_customers": 304,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2024-08-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 304,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2024-09-01",
+          "flow_type": "New customers",
+          "customer_count": 14,
+          "active_customers": 316,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2024-09-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 316,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2024-10-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 326,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2024-10-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 326,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2024-11-01",
+          "flow_type": "New customers",
+          "customer_count": 12,
+          "active_customers": 337,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2024-11-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 337,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2024-12-01",
+          "flow_type": "New customers",
+          "customer_count": 11,
+          "active_customers": 346,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2024-12-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 2,
+          "active_customers": 346,
+          "net_active_customer_change": 9
+        },
+        {
+          "revenue_month": "2025-01-01",
+          "flow_type": "New customers",
+          "customer_count": 11,
+          "active_customers": 360,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2025-01-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 0,
+          "active_customers": 360,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2025-02-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 373,
+          "net_active_customer_change": 13
+        },
+        {
+          "revenue_month": "2025-02-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 373,
+          "net_active_customer_change": 13
+        },
+        {
+          "revenue_month": "2025-03-01",
+          "flow_type": "New customers",
+          "customer_count": 15,
+          "active_customers": 385,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2025-03-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 4,
+          "active_customers": 385,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2025-04-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 395,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2025-04-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 2,
+          "active_customers": 395,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2025-05-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 406,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2025-05-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 2,
+          "active_customers": 406,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2025-06-01",
+          "flow_type": "New customers",
+          "customer_count": 14,
+          "active_customers": 416,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2025-06-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 416,
+          "net_active_customer_change": 10
+        },
+        {
+          "revenue_month": "2025-07-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 428,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2025-07-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 2,
+          "active_customers": 428,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2025-08-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 440,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2025-08-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 1,
+          "active_customers": 440,
+          "net_active_customer_change": 12
+        },
+        {
+          "revenue_month": "2025-09-01",
+          "flow_type": "New customers",
+          "customer_count": 16,
+          "active_customers": 453,
+          "net_active_customer_change": 13
+        },
+        {
+          "revenue_month": "2025-09-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 4,
+          "active_customers": 453,
+          "net_active_customer_change": 13
+        },
+        {
+          "revenue_month": "2025-10-01",
+          "flow_type": "New customers",
+          "customer_count": 15,
+          "active_customers": 467,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2025-10-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 3,
+          "active_customers": 467,
+          "net_active_customer_change": 14
+        },
+        {
+          "revenue_month": "2025-11-01",
+          "flow_type": "New customers",
+          "customer_count": 14,
+          "active_customers": 478,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2025-11-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 4,
+          "active_customers": 478,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2025-12-01",
+          "flow_type": "New customers",
+          "customer_count": 13,
+          "active_customers": 489,
+          "net_active_customer_change": 11
+        },
+        {
+          "revenue_month": "2025-12-01",
+          "flow_type": "Permanent churn",
+          "customer_count": 3,
+          "active_customers": 489,
+          "net_active_customer_change": 11
+        }
+      ],
+      "growth_rate_comparison": [
+        {
+          "revenue_month": "2024-01-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 1.238
+        },
+        {
+          "revenue_month": "2024-01-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 1.1540000000000001
+        },
+        {
+          "revenue_month": "2024-02-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 1.1520000000000001
+        },
+        {
+          "revenue_month": "2024-02-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 1.07
+        },
+        {
+          "revenue_month": "2024-03-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 1.1059999999999999
+        },
+        {
+          "revenue_month": "2024-03-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 1.0
+        },
+        {
+          "revenue_month": "2024-04-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 1.0390000000000001
+        },
+        {
+          "revenue_month": "2024-04-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.955
+        },
+        {
+          "revenue_month": "2024-05-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.987
+        },
+        {
+          "revenue_month": "2024-05-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.8809999999999999
+        },
+        {
+          "revenue_month": "2024-06-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.96
+        },
+        {
+          "revenue_month": "2024-06-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.838
+        },
+        {
+          "revenue_month": "2024-07-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.934
+        },
+        {
+          "revenue_month": "2024-07-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.7929999999999999
+        },
+        {
+          "revenue_month": "2024-08-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.902
+        },
+        {
+          "revenue_month": "2024-08-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.747
+        },
+        {
+          "revenue_month": "2024-09-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.81
+        },
+        {
+          "revenue_month": "2024-09-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.6990000000000001
+        },
+        {
+          "revenue_month": "2024-10-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.765
+        },
+        {
+          "revenue_month": "2024-10-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.6459999999999999
+        },
+        {
+          "revenue_month": "2024-11-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.723
+        },
+        {
+          "revenue_month": "2024-11-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.628
+        },
+        {
+          "revenue_month": "2024-12-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.71
+        },
+        {
+          "revenue_month": "2024-12-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.602
+        },
+        {
+          "revenue_month": "2025-01-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.723
+        },
+        {
+          "revenue_month": "2025-01-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.607
+        },
+        {
+          "revenue_month": "2025-02-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.677
+        },
+        {
+          "revenue_month": "2025-02-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.581
+        },
+        {
+          "revenue_month": "2025-03-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.624
+        },
+        {
+          "revenue_month": "2025-03-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.54
+        },
+        {
+          "revenue_month": "2025-04-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.596
+        },
+        {
+          "revenue_month": "2025-04-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.519
+        },
+        {
+          "revenue_month": "2025-05-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.581
+        },
+        {
+          "revenue_month": "2025-05-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.509
+        },
+        {
+          "revenue_month": "2025-06-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.527
+        },
+        {
+          "revenue_month": "2025-06-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.47
+        },
+        {
+          "revenue_month": "2025-07-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.503
+        },
+        {
+          "revenue_month": "2025-07-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.456
+        },
+        {
+          "revenue_month": "2025-08-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.504
+        },
+        {
+          "revenue_month": "2025-08-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.447
+        },
+        {
+          "revenue_month": "2025-09-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.483
+        },
+        {
+          "revenue_month": "2025-09-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.434
+        },
+        {
+          "revenue_month": "2025-10-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.485
+        },
+        {
+          "revenue_month": "2025-10-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.433
+        },
+        {
+          "revenue_month": "2025-11-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.48700000000000004
+        },
+        {
+          "revenue_month": "2025-11-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.418
+        },
+        {
+          "revenue_month": "2025-12-01",
+          "growth_series": "ARR growth",
+          "yoy_growth_rate": 0.47700000000000004
+        },
+        {
+          "revenue_month": "2025-12-01",
+          "growth_series": "Active-customer growth",
+          "yoy_growth_rate": 0.413
+        }
+      ],
+      "segment_churn": [
+        {
+          "company_segment": "Mid-Market",
+          "starting_plan_tier": "Professional",
+          "acquired_customers": 301,
+          "permanently_churned_customers": 25,
+          "observed_logo_churn_rate": 0.083,
+          "active_customers_dec_2025": 276,
+          "ending_arr_crore": 51.77,
+          "permanent_churn_arr_lost_crore": 4.68,
+          "avg_arr_per_active_customer_crore": 0.188
+        },
+        {
+          "company_segment": "Large Enterprise",
+          "starting_plan_tier": "Enterprise",
+          "acquired_customers": 228,
+          "permanently_churned_customers": 15,
+          "observed_logo_churn_rate": 0.066,
+          "active_customers_dec_2025": 213,
+          "ending_arr_crore": 99.15,
+          "permanent_churn_arr_lost_crore": 6.71,
+          "avg_arr_per_active_customer_crore": 0.465
+        }
+      ],
+      "growth_quality": [
+        {
+          "year": 2023,
+          "ending_arr_crore": 59.74,
+          "active_customers": 216,
+          "avg_arr_per_active_customer_crore": 0.277,
+          "new_customers": 127,
+          "permanently_churned_customers": 4,
+          "net_new_minus_permanent_churn": 123,
+          "post_sale_added_arr_crore": 3.06,
+          "yoy_arr_growth_rate": null,
+          "yoy_active_customer_growth_rate": null,
+          "yoy_avg_arr_per_customer_growth_rate": null
+        },
+        {
+          "year": 2024,
+          "ending_arr_crore": 102.15,
+          "active_customers": 346,
+          "avg_arr_per_active_customer_crore": 0.295,
+          "new_customers": 143,
+          "permanently_churned_customers": 9,
+          "net_new_minus_permanent_churn": 134,
+          "post_sale_added_arr_crore": 7.17,
+          "yoy_arr_growth_rate": 0.71,
+          "yoy_active_customer_growth_rate": 0.602,
+          "yoy_avg_arr_per_customer_growth_rate": 0.067
+        },
+        {
+          "year": 2025,
+          "ending_arr_crore": 150.92,
+          "active_customers": 489,
+          "avg_arr_per_active_customer_crore": 0.309,
+          "new_customers": 163,
+          "permanently_churned_customers": 27,
+          "net_new_minus_permanent_churn": 136,
+          "post_sale_added_arr_crore": 12.0,
+          "yoy_arr_growth_rate": 0.47700000000000004,
+          "yoy_active_customer_growth_rate": 0.413,
+          "yoy_avg_arr_per_customer_growth_rate": 0.045
+        }
       ]
     }
   },
@@ -947,6 +2129,82 @@
         ],
         "metric_definitions": {
           "ARR lost": "MRR lost at permanent churn multiplied by 12."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    },
+    {
+      "id": "src_customer_flow",
+      "label": "Monthly customer growth and churn query",
+      "path": "sql/10_monthly_customer_growth_churn.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "WITH months AS (\n    SELECT DISTINCT revenue_month\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n),\nmonthly_revenue AS (\n    SELECT\n        revenue_month,\n        COUNT(DISTINCT customer_id) AS active_customers,\n        SUM(arr_run_rate_inr) AS ending_arr_inr,\n        SUM(CASE WHEN revenue_type = 'New' THEN 1 ELSE 0 END) AS new_customers,\n        SUM(CASE WHEN revenue_type = 'Reactivation' THEN 1 ELSE 0 END) AS reactivated_customers\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY revenue_month\n),\nmonthly_churn AS (\n    SELECT\n        substr(churn_date, 1, 7) || '-01' AS revenue_month,\n        COUNT(*) AS permanently_churned_customers,\n        SUM(mrr_lost_inr) * 12 AS permanent_churn_arr_lost_inr\n    FROM churn\n    WHERE churn_date BETWEEN '2023-01-01' AND '2025-12-31'\n    GROUP BY substr(churn_date, 1, 7) || '-01'\n),\ncombined AS (\n    SELECT\n        m.revenue_month,\n        r.active_customers,\n        r.ending_arr_inr,\n        r.new_customers,\n        r.reactivated_customers,\n        COALESCE(c.permanently_churned_customers, 0) AS permanently_churned_customers,\n        COALESCE(c.permanent_churn_arr_lost_inr, 0) AS permanent_churn_arr_lost_inr\n    FROM months m\n    JOIN monthly_revenue r USING (revenue_month)\n    LEFT JOIN monthly_churn c USING (revenue_month)\n),\nwith_comparisons AS (\n    SELECT\n        *,\n        LAG(active_customers) OVER (ORDER BY revenue_month) AS prior_month_active_customers,\n        LAG(ending_arr_inr) OVER (ORDER BY revenue_month) AS prior_month_arr_inr,\n        LAG(active_customers, 12) OVER (ORDER BY revenue_month) AS prior_year_active_customers,\n        LAG(ending_arr_inr, 12) OVER (ORDER BY revenue_month) AS prior_year_arr_inr\n    FROM combined\n)\nSELECT\n    revenue_month,\n    active_customers,\n    new_customers,\n    reactivated_customers,\n    permanently_churned_customers,\n    new_customers - permanently_churned_customers AS net_new_minus_permanent_churn,\n    active_customers - prior_month_active_customers AS net_active_customer_change,\n    ending_arr_inr,\n    ROUND(1.0 * ending_arr_inr / NULLIF(active_customers, 0), 0) AS avg_arr_per_active_customer_inr,\n    permanent_churn_arr_lost_inr,\n    ROUND(100.0 * (ending_arr_inr - prior_year_arr_inr) / NULLIF(prior_year_arr_inr, 0), 1) AS yoy_arr_growth_pct,\n    ROUND(100.0 * (active_customers - prior_year_active_customers) / NULLIF(prior_year_active_customers, 0), 1) AS yoy_active_customer_growth_pct\nFROM with_comparisons\nORDER BY revenue_month;\n",
+        "description": "Compares monthly customer acquisition, reactivation, permanent churn, active-customer movement, ARR, and average ARR per active customer.",
+        "tables_used": [
+          "revenue",
+          "churn"
+        ],
+        "filters": [
+          "Revenue months from 2023-01-01 through 2025-12-01",
+          "Permanent churn is grouped to calendar month"
+        ],
+        "metric_definitions": {
+          "Net active customer change": "Current month active customers minus prior month active customers.",
+          "YoY ARR growth": "Ending ARR change versus the same month one year earlier.",
+          "YoY active-customer growth": "Active-customer change versus the same month one year earlier."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    },
+    {
+      "id": "src_segment_churn",
+      "label": "Segment churn and retention query",
+      "path": "sql/11_segment_churn_retention.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "WITH customer_portfolio AS (\n    SELECT\n        c.customer_id,\n        c.company_segment,\n        p.plan_tier AS starting_plan_tier,\n        c.lifecycle_status,\n        COALESCE(ch.mrr_lost_inr * 12, 0) AS permanent_churn_arr_lost_inr,\n        COALESCE(SUM(CASE WHEN r.revenue_month = '2025-12-01' THEN r.arr_run_rate_inr ELSE 0 END), 0) AS ending_arr_inr\n    FROM customers c\n    JOIN products p ON p.product_id = c.initial_product_id\n    LEFT JOIN churn ch ON ch.customer_id = c.customer_id\n    LEFT JOIN revenue r ON r.customer_id = c.customer_id\n    GROUP BY\n        c.customer_id,\n        c.company_segment,\n        p.plan_tier,\n        c.lifecycle_status,\n        ch.mrr_lost_inr\n)\nSELECT\n    company_segment,\n    starting_plan_tier,\n    COUNT(*) AS acquired_customers,\n    SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END) AS permanently_churned_customers,\n    ROUND(\n        100.0 * SUM(CASE WHEN lifecycle_status = 'Churned' THEN 1 ELSE 0 END)\n        / NULLIF(COUNT(*), 0),\n        1\n    ) AS observed_logo_churn_pct,\n    SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END) AS active_customers_dec_2025,\n    SUM(ending_arr_inr) AS ending_arr_inr,\n    SUM(permanent_churn_arr_lost_inr) AS permanent_churn_arr_lost_inr,\n    ROUND(\n        1.0 * SUM(ending_arr_inr)\n        / NULLIF(SUM(CASE WHEN ending_arr_inr > 0 THEN 1 ELSE 0 END), 0),\n        0\n    ) AS avg_arr_per_active_customer_inr\nFROM customer_portfolio\nGROUP BY company_segment, starting_plan_tier\nORDER BY observed_logo_churn_pct DESC, ending_arr_inr DESC;\n",
+        "description": "Compares permanent logo churn, ending ARR, and ARR lost across customer segments and starting plans.",
+        "tables_used": [
+          "customers",
+          "products",
+          "revenue",
+          "churn"
+        ],
+        "filters": [
+          "Ending ARR is measured at 2025-12-01",
+          "Plan tier is the customer's starting plan",
+          "Permanent churn is observed over the full modeled history"
+        ],
+        "metric_definitions": {
+          "Observed segment logo churn": "Permanently churned customers divided by all acquired customers in the segment and starting-plan group; not annualized."
+        },
+        "executed_at": "2026-08-23T16:30:00Z"
+      }
+    },
+    {
+      "id": "src_growth_quality",
+      "label": "Annual growth quality diagnostic",
+      "path": "sql/12_growth_quality_diagnostic.sql",
+      "query": {
+        "language": "sql",
+        "engine": "SQLite",
+        "sql": "WITH year_end AS (\n    SELECT\n        CAST(substr(revenue_month, 1, 4) AS INTEGER) AS year,\n        SUM(arr_run_rate_inr) AS ending_arr_inr,\n        COUNT(DISTINCT customer_id) AS active_customers,\n        ROUND(1.0 * SUM(arr_run_rate_inr) / COUNT(DISTINCT customer_id), 0) AS avg_arr_per_active_customer_inr\n    FROM revenue\n    WHERE substr(revenue_month, 6, 5) = '12-01'\n      AND revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY CAST(substr(revenue_month, 1, 4) AS INTEGER)\n),\nannual_new_and_post_sale AS (\n    SELECT\n        CAST(substr(revenue_month, 1, 4) AS INTEGER) AS year,\n        SUM(CASE WHEN revenue_type = 'New' THEN 1 ELSE 0 END) AS new_customers,\n        SUM(\n            CASE WHEN revenue_type IN ('Expansion', 'Upgrade', 'Reactivation')\n                 THEN movement_mrr_inr * 12 ELSE 0 END\n        ) AS post_sale_added_arr_inr\n    FROM revenue\n    WHERE revenue_month BETWEEN '2023-01-01' AND '2025-12-01'\n    GROUP BY CAST(substr(revenue_month, 1, 4) AS INTEGER)\n),\nannual_churn AS (\n    SELECT\n        CAST(substr(churn_date, 1, 4) AS INTEGER) AS year,\n        COUNT(*) AS permanently_churned_customers,\n        SUM(mrr_lost_inr) * 12 AS permanent_churn_arr_lost_inr\n    FROM churn\n    WHERE churn_date BETWEEN '2023-01-01' AND '2025-12-31'\n    GROUP BY CAST(substr(churn_date, 1, 4) AS INTEGER)\n),\nannual AS (\n    SELECT\n        y.year,\n        y.ending_arr_inr,\n        y.active_customers,\n        y.avg_arr_per_active_customer_inr,\n        n.new_customers,\n        COALESCE(c.permanently_churned_customers, 0) AS permanently_churned_customers,\n        n.new_customers - COALESCE(c.permanently_churned_customers, 0) AS net_new_minus_permanent_churn,\n        n.post_sale_added_arr_inr,\n        COALESCE(c.permanent_churn_arr_lost_inr, 0) AS permanent_churn_arr_lost_inr,\n        LAG(y.ending_arr_inr) OVER (ORDER BY y.year) AS prior_year_arr_inr,\n        LAG(y.active_customers) OVER (ORDER BY y.year) AS prior_year_active_customers,\n        LAG(y.avg_arr_per_active_customer_inr) OVER (ORDER BY y.year) AS prior_year_avg_arr_inr\n    FROM year_end y\n    JOIN annual_new_and_post_sale n USING (year)\n    LEFT JOIN annual_churn c USING (year)\n)\nSELECT\n    year,\n    ending_arr_inr,\n    active_customers,\n    avg_arr_per_active_customer_inr,\n    new_customers,\n    permanently_churned_customers,\n    net_new_minus_permanent_churn,\n    post_sale_added_arr_inr,\n    permanent_churn_arr_lost_inr,\n    ROUND(100.0 * (ending_arr_inr - prior_year_arr_inr) / NULLIF(prior_year_arr_inr, 0), 1) AS yoy_arr_growth_pct,\n    ROUND(100.0 * (active_customers - prior_year_active_customers) / NULLIF(prior_year_active_customers, 0), 1) AS yoy_active_customer_growth_pct,\n    ROUND(\n        100.0 * (avg_arr_per_active_customer_inr - prior_year_avg_arr_inr)\n        / NULLIF(prior_year_avg_arr_inr, 0),\n        1\n    ) AS yoy_avg_arr_per_customer_growth_pct,\n    ROUND(\n        100.0 * (ending_arr_inr - prior_year_arr_inr) / NULLIF(prior_year_arr_inr, 0)\n        - 100.0 * (active_customers - prior_year_active_customers) / NULLIF(prior_year_active_customers, 0),\n        1\n    ) AS arr_growth_minus_customer_growth_pp\nFROM annual\nORDER BY year;\n",
+        "description": "Separates annual ARR growth into active-customer growth and average ARR per active customer while retaining acquisition, churn, and post-sale growth context.",
+        "tables_used": [
+          "revenue",
+          "churn"
+        ],
+        "filters": [
+          "Calendar years 2023 through 2025",
+          "Year-end metrics use each December"
+        ],
+        "metric_definitions": {
+          "YoY ARR growth": "December ending ARR change versus the previous December.",
+          "YoY active-customer growth": "December active-customer change versus the previous December.",
+          "Average ARR per active customer": "December ending ARR divided by December active customers."
         },
         "executed_at": "2026-08-23T16:30:00Z"
       }

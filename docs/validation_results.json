@@ -1,6 +1,6 @@
 {
   "overall_assessment": "Ready to share",
-  "checks_run": 18,
+  "checks_run": 21,
   "failures": [],
   "checks": [
     {
@@ -91,13 +91,31 @@
       "check": "Canonical report artifact is bounded",
       "passed": true,
       "severity_if_failed": "High",
-      "evidence": "Datasets: {'kpis': 1, 'monthly_growth': 36, 'channel_performance': 5, 'growth_events_2025': 4, 'churn_reasons': 5}"
+      "evidence": "Datasets: {'kpis': 1, 'monthly_growth': 36, 'channel_performance': 5, 'growth_events_2025': 4, 'churn_reasons': 5, 'monthly_logo_flow': 72, 'growth_rate_comparison': 48, 'segment_churn': 2, 'growth_quality': 3}"
     },
     {
       "check": "Portable report package exists",
       "passed": true,
       "severity_if_failed": "Medium",
-      "evidence": "report.html size: 462,942 bytes"
+      "evidence": "report.html size: 553,156 bytes"
+    },
+    {
+      "check": "Monthly customer-flow logic",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "2025 new=163; permanent churn=27; all monthly net changes nonnegative=True"
+    },
+    {
+      "check": "Segment churn subtotals reconcile",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Acquired=529; churned=40; ending ARR=1,509,240,000"
+    },
+    {
+      "check": "Growth-quality metrics reconcile",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "2024 ARR=71.0%; 2025 ARR=47.7%; customers=41.3%; ARR/customer=4.5%"
     },
     {
       "check": "README headline claims match reviewed outputs",

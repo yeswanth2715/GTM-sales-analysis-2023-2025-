@@ -1,0 +1,4 @@
+year,ending_arr_inr,active_customers,avg_arr_per_active_customer_inr,new_customers,permanently_churned_customers,net_new_minus_permanent_churn,post_sale_added_arr_inr,permanent_churn_arr_lost_inr,yoy_arr_growth_pct,yoy_active_customer_growth_pct,yoy_avg_arr_per_customer_growth_pct,arr_growth_minus_customer_growth_pp
+2023,597420000,216,2765833.0,127,4,123,30600000,15480000,,,,
+2024,1021500000,346,2952312.0,143,9,134,71700000,22920000,71.0,60.2,6.7,10.8
+2025,1509240000,489,3086380.0,163,27,136,120000000,75480000,47.7,41.3,4.5,6.4

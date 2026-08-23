@@ -134,5 +134,60 @@
       "upgrade_events",
       "observed_logo_churn_pct"
     ]
+  },
+  "10_monthly_customer_growth_churn": {
+    "sql_file": "sql/10_monthly_customer_growth_churn.sql",
+    "output_file": "analysis/outputs/10_monthly_customer_growth_churn.csv",
+    "row_count": 36,
+    "columns": [
+      "revenue_month",
+      "active_customers",
+      "new_customers",
+      "reactivated_customers",
+      "permanently_churned_customers",
+      "net_new_minus_permanent_churn",
+      "net_active_customer_change",
+      "ending_arr_inr",
+      "avg_arr_per_active_customer_inr",
+      "permanent_churn_arr_lost_inr",
+      "yoy_arr_growth_pct",
+      "yoy_active_customer_growth_pct"
+    ]
+  },
+  "11_segment_churn_retention": {
+    "sql_file": "sql/11_segment_churn_retention.sql",
+    "output_file": "analysis/outputs/11_segment_churn_retention.csv",
+    "row_count": 2,
+    "columns": [
+      "company_segment",
+      "starting_plan_tier",
+      "acquired_customers",
+      "permanently_churned_customers",
+      "observed_logo_churn_pct",
+      "active_customers_dec_2025",
+      "ending_arr_inr",
+      "permanent_churn_arr_lost_inr",
+      "avg_arr_per_active_customer_inr"
+    ]
+  },
+  "12_growth_quality_diagnostic": {
+    "sql_file": "sql/12_growth_quality_diagnostic.sql",
+    "output_file": "analysis/outputs/12_growth_quality_diagnostic.csv",
+    "row_count": 3,
+    "columns": [
+      "year",
+      "ending_arr_inr",
+      "active_customers",
+      "avg_arr_per_active_customer_inr",
+      "new_customers",
+      "permanently_churned_customers",
+      "net_new_minus_permanent_churn",
+      "post_sale_added_arr_inr",
+      "permanent_churn_arr_lost_inr",
+      "yoy_arr_growth_pct",
+      "yoy_active_customer_growth_pct",
+      "yoy_avg_arr_per_customer_growth_pct",
+      "arr_growth_minus_customer_growth_pp"
+    ]
   }
 }

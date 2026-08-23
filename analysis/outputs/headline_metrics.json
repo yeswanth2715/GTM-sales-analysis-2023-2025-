@@ -17,5 +17,13 @@
   "highest_churn_channel": "Outbound",
   "nrr_2024_pct": 100.2,
   "top_churn_reason": "Missing Integration",
-  "top_churn_reason_arr_lost_inr": 35700000
+  "top_churn_reason_arr_lost_inr": 35700000,
+  "highest_churn_segment": "Mid-Market",
+  "highest_churn_segment_starting_plan": "Professional",
+  "highest_segment_observed_logo_churn_pct": 8.3,
+  "arr_growth_2024_pct": 71.0,
+  "arr_growth_2025_pct": 47.7,
+  "active_customer_growth_2025_pct": 41.3,
+  "avg_arr_per_customer_growth_2025_pct": 4.5,
+  "permanently_churned_customers_2025": 27
 }

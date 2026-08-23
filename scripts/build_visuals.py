@@ -165,7 +165,87 @@ def draw_churn_bars(body: list[str], rows: list[dict], x: int, y: int, width: in
         body.append(text(x + width - 28, yy + 17, rupee_crore(value), 13, 700, INK, "end"))
 
 
-def build_dashboard(root: Path, metrics: dict, monthly: list[dict], channels: list[dict], churn: list[dict]) -> str:
+def draw_growth_quality_lines(body: list[str], rows: list[dict], x: int, y: int, width: int, height: int) -> None:
+    comparable = [row for row in rows if row["yoy_arr_growth_pct"]]
+    body.append(rect(x, y, width, height, WHITE, 18, GRID))
+    body.append(text(x + 28, y + 40, "Year-over-year growth quality", 22, 700))
+    body.append(text(x + 28, y + 67, "ARR growth vs active-customer growth · Jan 2024–Dec 2025", 15, 400, MUTED))
+    plot_x, plot_y = x + 72, y + 104
+    plot_w, plot_h = width - 112, height - 160
+    maximum = max(max(float(row["yoy_arr_growth_pct"]), float(row["yoy_active_customer_growth_pct"])) for row in comparable) * 1.08
+    for tick in range(5):
+        value = maximum * tick / 4
+        yy = plot_y + plot_h - plot_h * tick / 4
+        body.append(line(plot_x, yy, plot_x + plot_w, yy, GRID, 1))
+        body.append(text(plot_x - 12, yy + 5, f"{value:.0f}%", 13, 400, MUTED, "end"))
+    series = [
+        ("yoy_arr_growth_pct", "ARR growth", BLUE),
+        ("yoy_active_customer_growth_pct", "Customer growth", GOLD),
+    ]
+    for field, _, color in series:
+        points = []
+        for index, row in enumerate(comparable):
+            value = float(row[field])
+            px = plot_x + plot_w * index / (len(comparable) - 1)
+            py = plot_y + plot_h - value / maximum * plot_h
+            points.append((px, py))
+        path = "M " + " ".join(f"{px:.1f} {py:.1f}" if i == 0 else f"L {px:.1f} {py:.1f}" for i, (px, py) in enumerate(points))
+        body.append(f'<path d="{path}" fill="none" stroke="{color}" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>')
+        body.append(f'<circle cx="{points[-1][0]:.1f}" cy="{points[-1][1]:.1f}" r="5" fill="{WHITE}" stroke="{color}" stroke-width="3"/>')
+        body.append(text(points[-1][0] - 3, points[-1][1] - 12, f'{float(comparable[-1][field]):.1f}%', 13, 700, color, "end"))
+    body.append(line(x + 30, y + height - 28, x + 54, y + height - 28, BLUE, 4))
+    body.append(text(x + 62, y + height - 23, "ARR growth", 13, 600, MUTED))
+    body.append(line(x + 160, y + height - 28, x + 184, y + height - 28, GOLD, 4))
+    body.append(text(x + 192, y + height - 23, "Active-customer growth", 13, 600, MUTED))
+
+
+def draw_customer_flow_lines(body: list[str], rows: list[dict], x: int, y: int, width: int, height: int) -> None:
+    body.append(rect(x, y, width, height, WHITE, 18, GRID))
+    body.append(text(x + 28, y + 40, "Monthly customer additions and churn", 22, 700))
+    body.append(text(x + 28, y + 67, "New customers vs permanent churn · Jan 2023–Dec 2025", 15, 400, MUTED))
+    plot_x, plot_y = x + 66, y + 98
+    plot_w, plot_h = width - 100, height - 150
+    maximum = max(float(row["new_customers"]) for row in rows) * 1.12
+    for tick in range(4):
+        value = maximum * tick / 3
+        yy = plot_y + plot_h - plot_h * tick / 3
+        body.append(line(plot_x, yy, plot_x + plot_w, yy, GRID, 1))
+        body.append(text(plot_x - 10, yy + 5, f"{value:.0f}", 12, 400, MUTED, "end"))
+    for field, color in [("new_customers", BLUE), ("permanently_churned_customers", PINK)]:
+        points = []
+        for index, row in enumerate(rows):
+            value = float(row[field])
+            px = plot_x + plot_w * index / (len(rows) - 1)
+            py = plot_y + plot_h - value / maximum * plot_h
+            points.append((px, py))
+        path = "M " + " ".join(f"{px:.1f} {py:.1f}" if i == 0 else f"L {px:.1f} {py:.1f}" for i, (px, py) in enumerate(points))
+        body.append(f'<path d="{path}" fill="none" stroke="{color}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>')
+    body.append(line(x + 30, y + height - 26, x + 54, y + height - 26, BLUE, 4))
+    body.append(text(x + 62, y + height - 21, "New customers", 13, 600, MUTED))
+    body.append(line(x + 180, y + height - 26, x + 204, y + height - 26, PINK, 4))
+    body.append(text(x + 212, y + height - 21, "Permanent churn", 13, 600, MUTED))
+
+
+def draw_segment_churn(body: list[str], rows: list[dict], x: int, y: int, width: int, height: int) -> None:
+    body.append(rect(x, y, width, height, WHITE, 18, GRID))
+    body.append(text(x + 28, y + 40, "Observed permanent churn by segment", 22, 700))
+    body.append(text(x + 28, y + 67, "Full-history logo churn; starting plan fixes the cohort", 15, 400, MUTED))
+    maximum = max(float(row["observed_logo_churn_pct"]) for row in rows) * 1.25
+    start_y = y + 112
+    label_w = 164
+    bar_w = width - 288
+    for index, row in enumerate(rows):
+        yy = start_y + index * 82
+        value = float(row["observed_logo_churn_pct"])
+        body.append(text(x + 28, yy + 18, row["company_segment"], 15, 600, INK))
+        body.append(text(x + 28, yy + 40, f'Started on {row["starting_plan_tier"]}', 12, 400, MUTED))
+        body.append(rect(x + 28 + label_w, yy, bar_w, 25, "#F1F2F5", 8))
+        body.append(rect(x + 28 + label_w, yy, bar_w * value / maximum, 25, PINK, 8))
+        body.append(text(x + width - 28, yy + 19, f"{value:.1f}%", 14, 700, INK, "end"))
+        body.append(text(x + 28 + label_w, yy + 52, f'ARR lost {rupee_crore(float(row["permanent_churn_arr_lost_inr"]))}', 12, 500, MUTED))
+
+
+def build_dashboard(root: Path, metrics: dict, monthly: list[dict], channels: list[dict], churn: list[dict], customer_flow: list[dict], segment_churn: list[dict]) -> str:
     body: list[str] = []
     body.append(rect(0, 0, 1600, 116, INK, 0))
     body.append(text(56, 58, "B2B SaaS Revenue Growth & GTM Performance", 34, 700, WHITE))
@@ -174,19 +254,19 @@ def build_dashboard(root: Path, metrics: dict, monthly: list[dict], channels: li
 
     card(body, 56, 144, 340, 132, "Ending ARR", rupee_crore(metrics["ending_arr_inr"]), BLUE, "December 2025 run-rate")
     card(body, 416, 144, 340, 132, "Active customers", f'{metrics["ending_active_customers"]:,}', GOLD, "Professional + Enterprise")
-    card(body, 776, 144, 340, 132, "2025 NRR", f'{metrics["nrr_2025_pct"]:.1f}%', OLIVE, f'GRR {metrics["grr_2025_pct"]:.1f}%')
-    card(body, 1136, 144, 408, 132, "Two-year MRR growth", f'+{metrics["two_year_mrr_growth_pct"]:.1f}%', ORANGE, "Dec 2023 to Dec 2025")
+    card(body, 776, 144, 340, 132, "2025 ARR growth", f'+{metrics["arr_growth_2025_pct"]:.1f}%', OLIVE, f'2024: +{metrics["arr_growth_2024_pct"]:.1f}%')
+    card(body, 1136, 144, 408, 132, "Highest segment churn", f'{metrics["highest_segment_observed_logo_churn_pct"]:.1f}%', ORANGE, "Mid-Market · started Professional")
 
-    draw_line_chart(body, monthly, 56, 304, 936, 404)
-    draw_channel_bars(body, channels, 1016, 304, 528, 404)
-    draw_growth_bars(body, metrics, 56, 736, 744, 340)
-    draw_churn_bars(body, churn, 824, 736, 720, 340)
-    body.append(text(56, 1108, "Key read: Partner leads ending ARR; Outbound scales nearly as much but has the highest observed logo churn.", 17, 600, INK))
-    body.append(text(56, 1137, "Source: deterministic synthetic data generated in-repo. NRR uses the prior December customer cohort; reactivations are excluded from permanent churn.", 14, 400, MUTED))
+    draw_line_chart(body, monthly, 56, 304, 744, 404)
+    draw_growth_quality_lines(body, customer_flow, 824, 304, 720, 404)
+    draw_customer_flow_lines(body, customer_flow, 56, 736, 744, 340)
+    draw_segment_churn(body, segment_churn, 824, 736, 720, 340)
+    body.append(text(56, 1108, "Key read: ARR and customer counts still rise, but both growth rates are slowing; new additions remain above permanent churn.", 17, 600, INK))
+    body.append(text(56, 1137, "Source: deterministic synthetic data generated in-repo. Segment churn is a descriptive full-history ratio, not an annualized rate.", 14, 400, MUTED))
     return svg_document(1600, 1170, body)
 
 
-def build_linkedin(root: Path, metrics: dict, monthly: list[dict], channels: list[dict]) -> str:
+def build_linkedin(root: Path, metrics: dict, monthly: list[dict], customer_flow: list[dict]) -> str:
     body: list[str] = []
     body.append(rect(0, 0, 1200, 164, INK, 0))
     body.append(text(64, 64, "PORTFOLIO PROJECT", 18, 700, GOLD))
@@ -194,36 +274,43 @@ def build_linkedin(root: Path, metrics: dict, monthly: list[dict], channels: lis
     body.append(text(64, 143, "& GTM Performance Analysis", 36, 700, WHITE))
 
     card(body, 64, 198, 500, 142, "Ending ARR", rupee_crore(metrics["ending_arr_inr"]), BLUE, "December 2025 run-rate")
-    card(body, 588, 198, 548, 142, "2025 net revenue retention", f'{metrics["nrr_2025_pct"]:.1f}%', OLIVE, f'Gross retention: {metrics["grr_2025_pct"]:.1f}%')
+    card(body, 588, 198, 548, 142, "2025 ARR growth", f'+{metrics["arr_growth_2025_pct"]:.1f}%', OLIVE, f'2024: +{metrics["arr_growth_2024_pct"]:.1f}%')
     card(body, 64, 364, 500, 142, "Active customers", f'{metrics["ending_active_customers"]:,}', GOLD, "Professional + Enterprise")
-    card(body, 588, 364, 548, 142, "Two-year MRR growth", f'+{metrics["two_year_mrr_growth_pct"]:.1f}%', ORANGE, "Dec 2023 to Dec 2025")
+    card(body, 588, 364, 548, 142, "Highest segment churn", f'{metrics["highest_segment_observed_logo_churn_pct"]:.1f}%', ORANGE, "Mid-Market · started Professional")
 
     body.append(rect(64, 542, 1072, 350, WHITE, 18, GRID))
-    body.append(text(94, 586, "Monthly ending ARR", 22, 700))
-    body.append(text(94, 614, "36 observed months · INR crore", 15, 400, MUTED))
-    values = [float(row["ending_arr_inr"]) for row in monthly]
+    body.append(text(94, 586, "Growth quality: ARR versus active customers", 22, 700))
+    body.append(text(94, 614, "Year-over-year growth · Jan 2024–Dec 2025", 15, 400, MUTED))
+    rows = [row for row in customer_flow if row["yoy_arr_growth_pct"]]
+    arr_values = [float(row["yoy_arr_growth_pct"]) for row in rows]
+    customer_values = [float(row["yoy_active_customer_growth_pct"]) for row in rows]
     plot_x, plot_y, plot_w, plot_h = 112, 650, 976, 176
-    maximum = max(values) * 1.08
+    maximum = max(arr_values + customer_values) * 1.08
     for tick in range(4):
         yy = plot_y + plot_h - plot_h * tick / 3
         body.append(line(plot_x, yy, plot_x + plot_w, yy, GRID, 1))
-    points = []
-    for index, value in enumerate(values):
-        px = plot_x + plot_w * index / (len(values) - 1)
-        py = plot_y + plot_h - value / maximum * plot_h
-        points.append((px, py))
-    path = "M " + " ".join(f"{px:.1f} {py:.1f}" if i == 0 else f"L {px:.1f} {py:.1f}" for i, (px, py) in enumerate(points))
-    body.append(f'<path d="{path}" fill="none" stroke="{BLUE}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>')
-    body.append(text(plot_x, 856, "Jan ’23", 14, 400, MUTED))
+    for values, color in [(arr_values, BLUE), (customer_values, ORANGE)]:
+        points = []
+        for index, value in enumerate(values):
+            px = plot_x + plot_w * index / (len(values) - 1)
+            py = plot_y + plot_h - value / maximum * plot_h
+            points.append((px, py))
+        path = "M " + " ".join(f"{px:.1f} {py:.1f}" if i == 0 else f"L {px:.1f} {py:.1f}" for i, (px, py) in enumerate(points))
+        body.append(f'<path d="{path}" fill="none" stroke="{color}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>')
+    body.append(f'<circle cx="790" cy="604" r="6" fill="{BLUE}"/>')
+    body.append(text(804, 610, "ARR growth", 13, 600, INK))
+    body.append(f'<circle cx="922" cy="604" r="6" fill="{ORANGE}"/>')
+    body.append(text(936, 610, "Customer growth", 13, 600, INK))
+    body.append(text(plot_x, 856, "Jan ’24", 14, 400, MUTED))
     body.append(text(plot_x + plot_w, 856, "Dec ’25", 14, 400, MUTED, "end"))
-    body.append(text(points[-1][0], points[-1][1] - 16, rupee_crore(values[-1]), 16, 700, BLUE, "end"))
+    body.append(text(plot_x + plot_w, plot_y + plot_h - arr_values[-1] / maximum * plot_h - 14, f'{arr_values[-1]:.1f}%', 15, 700, BLUE, "end"))
 
     body.append(text(64, 950, "What the analysis found", 28, 700, INK))
     findings = [
-        f'Partner finished #1 with {rupee_crore(float(channels[0]["ending_arr_inr"]))} ending ARR.',
-        f'Outbound reached similar scale, but observed logo churn was {float(next(r for r in channels if r["acquisition_channel"] == "Outbound")["observed_logo_churn_pct"]):.1f}%.',
-        f'Expansion, upgrades and reactivation added {rupee_crore(metrics["expansion_arr_2025_inr"] + metrics["upgrade_arr_2025_inr"] + metrics["reactivated_arr_2025_inr"])} in 2025 ARR.',
-        "Missing integrations were the largest permanent-churn reason by ARR lost.",
+        f'ARR growth slowed from {metrics["arr_growth_2024_pct"]:.1f}% in 2024 to {metrics["arr_growth_2025_pct"]:.1f}% in 2025.',
+        "Active customers increased every month; the portfolio did not contract.",
+        f'2025 added 163 customers and permanently churned {metrics["permanently_churned_customers_2025"]}.',
+        "Mid-Market churned more logos; Enterprise churn carried more ARR per account.",
     ]
     for index, finding in enumerate(findings):
         yy = 1002 + index * 55
@@ -250,9 +337,11 @@ def main() -> None:
     monthly = load_csv(output_dir / "03_monthly_revenue_growth.csv")
     channels = load_csv(output_dir / "04_gtm_channel_performance.csv")
     churn = load_csv(output_dir / "08_churn_reasons.csv")
+    customer_flow = load_csv(output_dir / "10_monthly_customer_growth_churn.csv")
+    segment_churn = load_csv(output_dir / "11_segment_churn_retention.csv")
 
-    dashboard = build_dashboard(root, metrics, monthly, channels, churn)
-    linkedin = build_linkedin(root, metrics, monthly, channels)
+    dashboard = build_dashboard(root, metrics, monthly, channels, churn, customer_flow, segment_churn)
+    linkedin = build_linkedin(root, metrics, monthly, customer_flow)
     (assets_dir / "dashboard_preview.svg").write_text(dashboard, encoding="utf-8")
     (assets_dir / "linkedin_project_summary.svg").write_text(linkedin, encoding="utf-8")
     print(json.dumps({"dashboard": "assets/dashboard_preview.svg", "linkedin": "assets/linkedin_project_summary.svg"}, indent=2))

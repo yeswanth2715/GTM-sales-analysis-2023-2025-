@@ -26,8 +26,11 @@ The analysis answers a revenue-growth and GTM prioritization question at custome
 | Plan/segment subtotals reconcile | Passed | Plan/segment base=1,509,240,000; headline=1,509,240,000 |
 | 2025 post-sale growth reconciled | Passed | Event sum=120,000,000; KPI components=120,000,000 |
 | Deterministic regeneration | Passed | Matching CSV hashes: {'customers.csv': True, 'products.csv': True, 'revenue.csv': True, 'churn.csv': True} |
-| Canonical report artifact is bounded | Passed | Datasets: {'kpis': 1, 'monthly_growth': 36, 'channel_performance': 5, 'growth_events_2025': 4, 'churn_reasons': 5} |
-| Portable report package exists | Passed | report.html size: 462,942 bytes |
+| Canonical report artifact is bounded | Passed | Datasets: {'kpis': 1, 'monthly_growth': 36, 'channel_performance': 5, 'growth_events_2025': 4, 'churn_reasons': 5, 'monthly_logo_flow': 72, 'growth_rate_comparison': 48, 'segment_churn': 2, 'growth_quality': 3} |
+| Portable report package exists | Passed | report.html size: 553,156 bytes |
+| Monthly customer-flow logic | Passed | 2025 new=163; permanent churn=27; all monthly net changes nonnegative=True |
+| Segment churn subtotals reconcile | Passed | Acquired=529; churned=40; ending ARR=1,509,240,000 |
+| Growth-quality metrics reconcile | Passed | 2024 ARR=71.0%; 2025 ARR=47.7%; customers=41.3%; ARR/customer=4.5% |
 | README headline claims match reviewed outputs | Passed | Missing expected claims: none |
 | Final visual exports have intended dimensions | Passed | Dimensions: {'dashboard_preview.png': (1600, 1170), 'linkedin_project_summary.png': (1200, 1420)} |
 
