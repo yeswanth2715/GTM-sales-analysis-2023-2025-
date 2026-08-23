@@ -1,0 +1,115 @@
+{
+  "overall_assessment": "Ready to share",
+  "checks_run": 18,
+  "failures": [],
+  "checks": [
+    {
+      "check": "Core SQL data-quality checks",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "9 checks; failures: none"
+    },
+    {
+      "check": "Expected table volumes",
+      "passed": true,
+      "severity_if_failed": "Medium",
+      "evidence": "Expected and actual: {'customers': 529, 'products': 2, 'revenue': 10453, 'churn': 40}"
+    },
+    {
+      "check": "Complete 36-month coverage",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "2023-01-01 to 2025-12-01; 36 months"
+    },
+    {
+      "check": "Required-field completeness",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Nulls across NOT NULL columns: 0"
+    },
+    {
+      "check": "Financial-domain validity",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Invalid non-positive/negative money rows: 0"
+    },
+    {
+      "check": "Controlled-value validity",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Rows outside allowed enums: 0"
+    },
+    {
+      "check": "Referential integrity",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Foreign-key failures: 0"
+    },
+    {
+      "check": "Reactivation/churn business rule",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Reactivated customers in permanent churn: 0"
+    },
+    {
+      "check": "Ending ARR independently reconciled",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "KPI=1,509,240,000; MRR\u00d712=1,509,240,000; direct ARR sum=1,509,240,000"
+    },
+    {
+      "check": "2025 NRR/GRR independently recomputed",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "NRR=100.7%; GRR=94.4%"
+    },
+    {
+      "check": "Channel subtotals reconcile",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Channel sum=1,509,240,000; headline=1,509,240,000"
+    },
+    {
+      "check": "Plan/segment subtotals reconcile",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Plan/segment base=1,509,240,000; headline=1,509,240,000"
+    },
+    {
+      "check": "2025 post-sale growth reconciled",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Event sum=120,000,000; KPI components=120,000,000"
+    },
+    {
+      "check": "Deterministic regeneration",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Matching CSV hashes: {'customers.csv': True, 'products.csv': True, 'revenue.csv': True, 'churn.csv': True}"
+    },
+    {
+      "check": "Canonical report artifact is bounded",
+      "passed": true,
+      "severity_if_failed": "High",
+      "evidence": "Datasets: {'kpis': 1, 'monthly_growth': 36, 'channel_performance': 5, 'growth_events_2025': 4, 'churn_reasons': 5}"
+    },
+    {
+      "check": "Portable report package exists",
+      "passed": true,
+      "severity_if_failed": "Medium",
+      "evidence": "report.html size: 462,942 bytes"
+    },
+    {
+      "check": "README headline claims match reviewed outputs",
+      "passed": true,
+      "severity_if_failed": "Medium",
+      "evidence": "Missing expected claims: none"
+    },
+    {
+      "check": "Final visual exports have intended dimensions",
+      "passed": true,
+      "severity_if_failed": "Medium",
+      "evidence": "Dimensions: {'dashboard_preview.png': (1600, 1170), 'linkedin_project_summary.png': (1200, 1420)}"
+    }
+  ]
+}
