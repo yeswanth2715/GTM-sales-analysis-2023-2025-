@@ -1,0 +1,22 @@
+name: Validate portfolio project
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild synthetic data
+        run: python3 scripts/generate_data.py
+      - name: Run SQL analysis
+        run: python3 scripts/run_analysis.py
+      - name: Build report artifact
+        run: python3 scripts/build_report_artifact.py
+      - name: Run validation
+        run: python3 scripts/validate_project.py
