@@ -1,0 +1,3 @@
+product_id,product_name,plan_tier,billing_frequency,included_users,base_monthly_price_inr,target_segment
+P001,Professional CRM,Professional,Annual,75,90000,Mid-Market
+P002,Enterprise CRM,Enterprise,Annual,250,250000,Large Enterprise

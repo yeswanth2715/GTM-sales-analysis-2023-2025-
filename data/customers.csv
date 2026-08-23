@@ -1,0 +1,530 @@
+customer_id,company_name,industry,company_segment,region,acquisition_channel,sales_owner,signup_date,first_contract_date,initial_product_id,current_product_id,lifecycle_status
+C0001,Vertex Systems 001,Manufacturing,Mid-Market,South,Inbound,Neha Kapoor,2022-11-01,2022-11-01,P001,P001,Active
+C0002,DigiCore Digital 002,Manufacturing,Large Enterprise,East,Inbound,Neha Kapoor,2022-06-01,2022-06-01,P002,P002,Active
+C0003,Nexora Labs 003,Manufacturing,Mid-Market,West,Partner,Aditi Rao,2022-11-01,2022-11-01,P001,P001,Active
+C0004,Everstone Industries 004,Financial Services,Mid-Market,South,Inbound,Aditi Rao,2022-01-01,2022-01-01,P001,P001,Active
+C0005,Westlake Networks 005,Retail,Mid-Market,North,Events,Meera Iyer,2022-01-01,2022-01-01,P001,P002,Active
+C0006,Cobalt Technologies 006,Financial Services,Mid-Market,North,Referral,Sara Khan,2022-07-01,2022-07-01,P001,P001,Active
+C0007,Westlake Solutions 007,Financial Services,Mid-Market,Central,Events,Vikram Shah,2022-11-01,2022-11-01,P001,P001,Active
+C0008,PrimeArc Labs 008,Manufacturing,Mid-Market,South,Partner,Meera Iyer,2022-02-01,2022-02-01,P001,P002,Active
+C0009,PrimeArc Digital 009,Retail,Mid-Market,West,Inbound,Aditi Rao,2022-11-01,2022-11-01,P001,P001,Active
+C0010,Quantara Enterprises 010,IT Services,Large Enterprise,South,Partner,Aditi Rao,2022-08-01,2022-08-01,P002,P002,Active
+C0011,HexaWorks Consulting 011,Financial Services,Large Enterprise,East,Events,Vikram Shah,2022-12-01,2022-12-01,P002,P002,Active
+C0012,UrbanStack Solutions 012,Professional Services,Mid-Market,North,Outbound,Rahul Mehta,2022-08-01,2022-08-01,P001,P001,Active
+C0013,TrueNorth Digital 013,IT Services,Mid-Market,West,Partner,Meera Iyer,2022-06-01,2022-06-01,P001,P001,Active
+C0014,Everstone Digital 014,Retail,Mid-Market,North,Partner,Aditi Rao,2022-10-01,2022-10-01,P001,P001,Active
+C0015,SkyGrid Consulting 015,IT Services,Mid-Market,North,Referral,Meera Iyer,2022-07-01,2022-07-01,P001,P002,Active
+C0016,FinAxis Consulting 016,Financial Services,Large Enterprise,South,Events,Meera Iyer,2022-12-01,2022-12-01,P002,P002,Active
+C0017,TrueNorth Networks 017,IT Services,Large Enterprise,West,Partner,Aditi Rao,2022-07-01,2022-07-01,P002,P002,Churned
+C0018,Riverbend Industries 018,IT Services,Large Enterprise,North,Referral,Aditi Rao,2022-12-01,2022-12-01,P002,P002,Active
+C0019,UrbanStack Digital 019,Professional Services,Large Enterprise,West,Outbound,Neha Kapoor,2022-08-01,2022-08-01,P002,P002,Active
+C0020,Jupiter Industries 020,Manufacturing,Mid-Market,North,Events,Arjun Nair,2022-07-01,2022-07-01,P001,P002,Active
+C0021,Orbit Services 021,Professional Services,Mid-Market,East,Events,Meera Iyer,2022-10-01,2022-10-01,P001,P002,Active
+C0022,Jupiter Solutions 022,Financial Services,Large Enterprise,Central,Partner,Aditi Rao,2022-06-01,2022-06-01,P002,P002,Active
+C0023,Indus Systems 023,Professional Services,Mid-Market,East,Inbound,Sara Khan,2022-07-01,2022-07-01,P001,P001,Active
+C0024,Indus Industries 024,IT Services,Large Enterprise,South,Inbound,Aditi Rao,2022-04-01,2022-04-01,P002,P002,Active
+C0025,Aarav Labs 025,Professional Services,Mid-Market,South,Outbound,Neha Kapoor,2022-04-01,2022-04-01,P001,P001,Active
+C0026,Meridian Services 026,Professional Services,Large Enterprise,East,Referral,Sara Khan,2022-12-01,2022-12-01,P002,P002,Active
+C0027,Greenline Services 027,Manufacturing,Large Enterprise,North,Outbound,Neha Kapoor,2022-11-01,2022-11-01,P002,P002,Active
+C0028,Cobalt Consulting 028,Manufacturing,Mid-Market,West,Partner,Aditi Rao,2022-11-01,2022-11-01,P001,P001,Active
+C0029,FinAxis Services 029,Manufacturing,Mid-Market,South,Outbound,Arjun Nair,2022-10-01,2022-10-01,P001,P001,Active
+C0030,Jupiter Digital 030,Manufacturing,Large Enterprise,East,Referral,Meera Iyer,2022-06-01,2022-06-01,P002,P002,Active
+C0031,Everstone Digital 031,Financial Services,Large Enterprise,North,Partner,Meera Iyer,2022-03-01,2022-03-01,P002,P002,Active
+C0032,Everstone Services 032,IT Services,Large Enterprise,South,Inbound,Aditi Rao,2022-07-01,2022-07-01,P002,P002,Active
+C0033,KiteBridge Networks 033,Manufacturing,Large Enterprise,North,Outbound,Rahul Mehta,2022-10-01,2022-10-01,P002,P002,Churned
+C0034,Vertex Networks 034,Financial Services,Large Enterprise,West,Events,Vikram Shah,2022-06-01,2022-06-01,P002,P002,Churned
+C0035,Everstone Industries 035,Financial Services,Large Enterprise,East,Outbound,Rahul Mehta,2022-07-01,2022-07-01,P002,P002,Active
+C0036,Lumina Industries 036,Manufacturing,Mid-Market,North,Inbound,Aditi Rao,2022-02-01,2022-02-01,P001,P002,Active
+C0037,Vertex Networks 037,Financial Services,Mid-Market,South,Inbound,Sara Khan,2022-08-01,2022-08-01,P001,P001,Active
+C0038,Meridian Networks 038,Professional Services,Large Enterprise,Central,Events,Meera Iyer,2022-06-01,2022-06-01,P002,P002,Active
+C0039,Zenith Services 039,Manufacturing,Mid-Market,West,Outbound,Rahul Mehta,2022-11-01,2022-11-01,P001,P001,Active
+C0040,Indus Labs 040,Healthcare,Mid-Market,North,Events,Vikram Shah,2022-04-01,2022-04-01,P001,P002,Active
+C0041,Quantara Systems 041,Manufacturing,Mid-Market,West,Inbound,Neha Kapoor,2022-09-01,2022-09-01,P001,P001,Active
+C0042,KiteBridge Technologies 042,Professional Services,Mid-Market,West,Referral,Sara Khan,2022-01-01,2022-01-01,P001,P001,Active
+C0043,Everstone Industries 043,Professional Services,Large Enterprise,South,Outbound,Arjun Nair,2022-04-01,2022-04-01,P002,P002,Active
+C0044,Zenith Systems 044,Professional Services,Mid-Market,North,Inbound,Sara Khan,2022-09-01,2022-09-01,P001,P001,Active
+C0045,Greenline Services 045,Manufacturing,Mid-Market,North,Partner,Meera Iyer,2022-08-01,2022-08-01,P001,P001,Active
+C0046,SkyGrid Systems 046,IT Services,Mid-Market,Central,Partner,Vikram Shah,2022-01-01,2022-01-01,P001,P002,Active
+C0047,Lumina Enterprises 047,IT Services,Large Enterprise,West,Outbound,Arjun Nair,2022-08-01,2022-08-01,P002,P002,Churned
+C0048,HexaWorks Labs 048,Professional Services,Mid-Market,North,Inbound,Sara Khan,2022-06-01,2022-06-01,P001,P001,Active
+C0049,HexaWorks Enterprises 049,Professional Services,Mid-Market,West,Partner,Aditi Rao,2022-07-01,2022-07-01,P001,P002,Active
+C0050,TrueNorth Digital 050,IT Services,Mid-Market,South,Inbound,Sara Khan,2022-11-01,2022-11-01,P001,P001,Active
+C0051,BluePeak Industries 051,Professional Services,Mid-Market,Central,Outbound,Rahul Mehta,2022-10-01,2022-10-01,P001,P001,Active
+C0052,Westlake Enterprises 052,Healthcare,Mid-Market,South,Outbound,Rahul Mehta,2022-04-01,2022-04-01,P001,P001,Churned
+C0053,FinAxis Services 053,Financial Services,Large Enterprise,West,Partner,Vikram Shah,2022-11-01,2022-11-01,P002,P002,Active
+C0054,Greenline Consulting 054,Manufacturing,Mid-Market,East,Partner,Meera Iyer,2022-12-01,2022-12-01,P001,P001,Active
+C0055,PrimeArc Digital 055,Manufacturing,Large Enterprise,West,Partner,Meera Iyer,2022-08-01,2022-08-01,P002,P002,Active
+C0056,SkyGrid Enterprises 056,Healthcare,Mid-Market,East,Outbound,Rahul Mehta,2022-06-01,2022-06-01,P001,P001,Active
+C0057,Jupiter Technologies 057,Manufacturing,Mid-Market,South,Inbound,Sara Khan,2022-05-01,2022-05-01,P001,P001,Active
+C0058,Zenith Systems 058,Healthcare,Mid-Market,North,Inbound,Sara Khan,2022-05-01,2022-05-01,P001,P001,Active
+C0059,DigiCore Digital 059,Healthcare,Large Enterprise,West,Events,Meera Iyer,2022-06-01,2022-06-01,P002,P002,Active
+C0060,Zenith Networks 060,Financial Services,Mid-Market,West,Inbound,Aditi Rao,2022-10-01,2022-10-01,P001,P001,Active
+C0061,FinAxis Networks 061,Healthcare,Large Enterprise,Central,Outbound,Arjun Nair,2022-03-01,2022-03-01,P002,P002,Churned
+C0062,Riverbend Consulting 062,Financial Services,Mid-Market,West,Outbound,Rahul Mehta,2022-11-01,2022-11-01,P001,P002,Active
+C0063,FinAxis Technologies 063,IT Services,Large Enterprise,South,Events,Vikram Shah,2022-05-01,2022-05-01,P002,P002,Active
+C0064,Riverbend Industries 064,Retail,Mid-Market,North,Outbound,Arjun Nair,2022-04-01,2022-04-01,P001,P001,Active
+C0065,UrbanStack Solutions 065,Retail,Large Enterprise,West,Inbound,Sara Khan,2022-07-01,2022-07-01,P002,P002,Active
+C0066,Riverbend Technologies 066,Healthcare,Large Enterprise,South,Events,Vikram Shah,2022-11-01,2022-11-01,P002,P002,Active
+C0067,SkyGrid Enterprises 067,IT Services,Mid-Market,West,Inbound,Neha Kapoor,2022-06-01,2022-06-01,P001,P002,Active
+C0068,Quantara Solutions 068,Manufacturing,Large Enterprise,East,Outbound,Rahul Mehta,2022-10-01,2022-10-01,P002,P002,Active
+C0069,KiteBridge Labs 069,IT Services,Large Enterprise,North,Outbound,Arjun Nair,2022-05-01,2022-05-01,P002,P002,Active
+C0070,Westlake Solutions 070,Professional Services,Large Enterprise,South,Events,Meera Iyer,2022-10-01,2022-10-01,P002,P002,Active
+C0071,Jupiter Consulting 071,IT Services,Mid-Market,Central,Events,Vikram Shah,2022-05-01,2022-05-01,P001,P002,Active
+C0072,BluePeak Networks 072,Manufacturing,Mid-Market,Central,Outbound,Rahul Mehta,2022-03-01,2022-03-01,P001,P001,Active
+C0073,Cobalt Solutions 073,Retail,Large Enterprise,North,Events,Arjun Nair,2022-01-01,2022-01-01,P002,P002,Active
+C0074,HexaWorks Networks 074,IT Services,Mid-Market,West,Inbound,Neha Kapoor,2022-08-01,2022-08-01,P001,P001,Active
+C0075,FinAxis Labs 075,Financial Services,Mid-Market,South,Referral,Meera Iyer,2022-09-01,2022-09-01,P001,P001,Active
+C0076,KiteBridge Services 076,IT Services,Mid-Market,West,Outbound,Arjun Nair,2022-03-01,2022-03-01,P001,P002,Active
+C0077,Greenline Consulting 077,Manufacturing,Mid-Market,East,Outbound,Neha Kapoor,2022-06-01,2022-06-01,P001,P001,Churned
+C0078,Jupiter Systems 078,Retail,Large Enterprise,South,Outbound,Arjun Nair,2022-08-01,2022-08-01,P002,P002,Active
+C0079,KiteBridge Networks 079,IT Services,Mid-Market,North,Outbound,Arjun Nair,2022-03-01,2022-03-01,P001,P001,Active
+C0080,Lumina Systems 080,Financial Services,Mid-Market,North,Referral,Meera Iyer,2022-02-01,2022-02-01,P001,P001,Active
+C0081,Riverbend Labs 081,Retail,Mid-Market,South,Outbound,Arjun Nair,2022-12-01,2022-12-01,P001,P002,Churned
+C0082,Meridian Solutions 082,Financial Services,Mid-Market,North,Inbound,Sara Khan,2022-05-01,2022-05-01,P001,P001,Churned
+C0083,Westlake Industries 083,Financial Services,Large Enterprise,West,Outbound,Rahul Mehta,2022-11-01,2022-11-01,P002,P002,Active
+C0084,FinAxis Labs 084,Retail,Mid-Market,South,Outbound,Arjun Nair,2022-04-01,2022-04-01,P001,P001,Active
+C0085,KiteBridge Technologies 085,IT Services,Mid-Market,South,Outbound,Rahul Mehta,2022-03-01,2022-03-01,P001,P001,Active
+C0086,Indus Solutions 086,Manufacturing,Mid-Market,North,Referral,Meera Iyer,2022-08-01,2022-08-01,P001,P001,Active
+C0087,Indus Services 087,IT Services,Large Enterprise,West,Partner,Aditi Rao,2022-06-01,2022-06-01,P002,P002,Active
+C0088,Lumina Services 088,Financial Services,Large Enterprise,West,Partner,Vikram Shah,2022-08-01,2022-08-01,P002,P002,Active
+C0089,Zenith Technologies 089,IT Services,Large Enterprise,South,Partner,Meera Iyer,2022-02-01,2022-02-01,P002,P002,Active
+C0090,Aarav Solutions 090,IT Services,Large Enterprise,West,Outbound,Arjun Nair,2022-04-01,2022-04-01,P002,P002,Active
+C0091,Orbit Consulting 091,Professional Services,Mid-Market,West,Outbound,Rahul Mehta,2022-02-01,2022-02-01,P001,P002,Active
+C0092,Aarav Digital 092,Retail,Mid-Market,South,Referral,Aditi Rao,2022-06-01,2022-06-01,P001,P001,Churned
+C0093,DigiCore Consulting 093,Professional Services,Mid-Market,West,Events,Arjun Nair,2022-07-01,2022-07-01,P001,P001,Active
+C0094,Meridian Technologies 094,IT Services,Mid-Market,East,Outbound,Rahul Mehta,2022-04-01,2022-04-01,P001,P001,Active
+C0095,Indus Digital 095,Professional Services,Mid-Market,North,Outbound,Rahul Mehta,2022-08-01,2022-08-01,P001,P002,Active
+C0096,Jupiter Solutions 096,Professional Services,Mid-Market,South,Outbound,Neha Kapoor,2022-08-01,2022-08-01,P001,P001,Active
+C0097,SkyGrid Labs 097,Healthcare,Mid-Market,North,Outbound,Arjun Nair,2023-01-12,2023-01-01,P001,P001,Churned
+C0098,Zenith Technologies 098,Manufacturing,Mid-Market,North,Partner,Vikram Shah,2023-01-14,2023-01-01,P001,P002,Active
+C0099,Everstone Systems 099,Retail,Large Enterprise,East,Partner,Meera Iyer,2023-01-17,2023-01-01,P002,P002,Active
+C0100,Cobalt Technologies 100,Manufacturing,Mid-Market,South,Events,Meera Iyer,2023-01-16,2023-01-01,P001,P002,Active
+C0101,Riverbend Technologies 101,Financial Services,Mid-Market,North,Outbound,Arjun Nair,2023-01-13,2023-01-01,P001,P001,Active
+C0102,Meridian Enterprises 102,Professional Services,Mid-Market,West,Partner,Meera Iyer,2023-01-09,2023-01-01,P001,P001,Active
+C0103,Westlake Networks 103,Retail,Mid-Market,South,Outbound,Neha Kapoor,2023-01-01,2023-01-01,P001,P001,Active
+C0104,Riverbend Industries 104,Retail,Mid-Market,North,Partner,Aditi Rao,2023-01-01,2023-01-01,P001,P001,Active
+C0105,Aarav Systems 105,IT Services,Large Enterprise,East,Referral,Sara Khan,2023-02-17,2023-02-01,P002,P002,Active
+C0106,Cobalt Enterprises 106,Financial Services,Mid-Market,North,Inbound,Sara Khan,2023-02-05,2023-02-01,P001,P002,Active
+C0107,Orbit Services 107,Professional Services,Large Enterprise,West,Partner,Aditi Rao,2023-02-10,2023-02-01,P002,P002,Active
+C0108,PrimeArc Enterprises 108,Financial Services,Mid-Market,West,Outbound,Arjun Nair,2023-02-13,2023-02-01,P001,P002,Active
+C0109,KiteBridge Digital 109,Manufacturing,Large Enterprise,South,Referral,Sara Khan,2023-02-03,2023-02-01,P002,P002,Active
+C0110,Nexora Enterprises 110,Manufacturing,Mid-Market,South,Outbound,Rahul Mehta,2023-02-11,2023-02-01,P001,P001,Active
+C0111,Nexora Enterprises 111,Professional Services,Mid-Market,North,Partner,Aditi Rao,2023-02-01,2023-02-01,P001,P001,Active
+C0112,Quantara Consulting 112,Manufacturing,Mid-Market,South,Outbound,Rahul Mehta,2023-02-04,2023-02-01,P001,P001,Active
+C0113,Quantara Solutions 113,IT Services,Mid-Market,East,Inbound,Neha Kapoor,2023-02-20,2023-02-01,P001,P002,Active
+C0114,BluePeak Digital 114,IT Services,Mid-Market,South,Outbound,Arjun Nair,2023-02-18,2023-02-01,P001,P001,Active
+C0115,Everstone Solutions 115,IT Services,Mid-Market,West,Partner,Aditi Rao,2023-03-08,2023-03-01,P001,P002,Active
+C0116,Vertex Services 116,Professional Services,Mid-Market,West,Events,Arjun Nair,2023-03-08,2023-03-01,P001,P001,Active
+C0117,SkyGrid Labs 117,Healthcare,Mid-Market,Central,Partner,Aditi Rao,2023-03-02,2023-03-01,P001,P001,Active
+C0118,Everstone Enterprises 118,Financial Services,Mid-Market,Central,Inbound,Sara Khan,2023-03-04,2023-03-01,P001,P001,Active
+C0119,TrueNorth Services 119,Financial Services,Large Enterprise,North,Partner,Vikram Shah,2023-03-05,2023-03-01,P002,P002,Active
+C0120,UrbanStack Systems 120,Manufacturing,Mid-Market,South,Inbound,Aditi Rao,2023-03-12,2023-03-01,P001,P001,Active
+C0121,DigiCore Labs 121,Financial Services,Mid-Market,West,Outbound,Neha Kapoor,2023-03-18,2023-03-01,P001,P002,Active
+C0122,Orbit Networks 122,Manufacturing,Large Enterprise,North,Partner,Aditi Rao,2023-03-11,2023-03-01,P002,P002,Active
+C0123,SkyGrid Enterprises 123,Retail,Large Enterprise,South,Events,Vikram Shah,2023-03-03,2023-03-01,P002,P002,Active
+C0124,TrueNorth Industries 124,Manufacturing,Mid-Market,South,Referral,Aditi Rao,2023-03-14,2023-03-01,P001,P001,Active
+C0125,Meridian Technologies 125,Retail,Large Enterprise,Central,Events,Arjun Nair,2023-03-02,2023-03-01,P002,P002,Churned
+C0126,PrimeArc Networks 126,Retail,Large Enterprise,North,Outbound,Rahul Mehta,2023-03-16,2023-03-01,P002,P002,Active
+C0127,TrueNorth Solutions 127,Financial Services,Mid-Market,Central,Referral,Aditi Rao,2023-04-14,2023-04-01,P001,P001,Active
+C0128,Vertex Labs 128,Manufacturing,Large Enterprise,North,Referral,Sara Khan,2023-04-02,2023-04-01,P002,P002,Active
+C0129,Westlake Solutions 129,IT Services,Mid-Market,North,Outbound,Neha Kapoor,2023-04-20,2023-04-01,P001,P001,Active
+C0130,Orbit Technologies 130,Healthcare,Mid-Market,South,Outbound,Neha Kapoor,2023-04-17,2023-04-01,P001,P001,Churned
+C0131,Westlake Labs 131,Healthcare,Large Enterprise,North,Inbound,Neha Kapoor,2023-04-01,2023-04-01,P002,P002,Active
+C0132,UrbanStack Digital 132,IT Services,Mid-Market,West,Referral,Meera Iyer,2023-04-14,2023-04-01,P001,P001,Active
+C0133,Zenith Consulting 133,IT Services,Large Enterprise,South,Partner,Vikram Shah,2023-04-10,2023-04-01,P002,P002,Active
+C0134,Greenline Solutions 134,Retail,Large Enterprise,West,Partner,Aditi Rao,2023-04-12,2023-04-01,P002,P002,Active
+C0135,Vertex Labs 135,Manufacturing,Mid-Market,West,Partner,Vikram Shah,2023-04-11,2023-04-01,P001,P001,Active
+C0136,DigiCore Services 136,Healthcare,Mid-Market,West,Outbound,Rahul Mehta,2023-04-15,2023-04-01,P001,P001,Churned
+C0137,Westlake Industries 137,Healthcare,Mid-Market,West,Outbound,Neha Kapoor,2023-05-19,2023-05-01,P001,P001,Churned
+C0138,Jupiter Consulting 138,Professional Services,Mid-Market,West,Outbound,Neha Kapoor,2023-05-02,2023-05-01,P001,P001,Active
+C0139,Quantara Solutions 139,Manufacturing,Mid-Market,South,Partner,Vikram Shah,2023-05-10,2023-05-01,P001,P001,Active
+C0140,UrbanStack Services 140,Financial Services,Mid-Market,North,Outbound,Rahul Mehta,2023-05-04,2023-05-01,P001,P001,Active
+C0141,Zenith Networks 141,Healthcare,Mid-Market,North,Inbound,Neha Kapoor,2023-05-14,2023-05-01,P001,P001,Active
+C0142,Lumina Digital 142,Retail,Large Enterprise,West,Referral,Aditi Rao,2023-05-08,2023-05-01,P002,P002,Active
+C0143,KiteBridge Digital 143,Financial Services,Mid-Market,South,Partner,Aditi Rao,2023-05-16,2023-05-01,P001,P001,Churned
+C0144,Vertex Networks 144,Professional Services,Large Enterprise,North,Events,Meera Iyer,2023-05-13,2023-05-01,P002,P002,Active
+C0145,Meridian Technologies 145,Financial Services,Mid-Market,South,Outbound,Neha Kapoor,2023-05-05,2023-05-01,P001,P002,Active
+C0146,Aarav Labs 146,Retail,Mid-Market,East,Inbound,Aditi Rao,2023-05-19,2023-05-01,P001,P001,Active
+C0147,UrbanStack Labs 147,Professional Services,Mid-Market,East,Inbound,Aditi Rao,2023-06-09,2023-06-01,P001,P001,Active
+C0148,Orbit Consulting 148,Healthcare,Large Enterprise,West,Inbound,Aditi Rao,2023-06-20,2023-06-01,P002,P002,Active
+C0149,Meridian Enterprises 149,IT Services,Large Enterprise,South,Outbound,Neha Kapoor,2023-06-16,2023-06-01,P002,P002,Churned
+C0150,TrueNorth Networks 150,Healthcare,Mid-Market,North,Partner,Aditi Rao,2023-06-06,2023-06-01,P001,P001,Active
+C0151,Westlake Labs 151,Retail,Large Enterprise,East,Outbound,Arjun Nair,2023-06-14,2023-06-01,P002,P002,Active
+C0152,Lumina Enterprises 152,IT Services,Mid-Market,South,Inbound,Aditi Rao,2023-06-14,2023-06-01,P001,P001,Active
+C0153,FinAxis Systems 153,Financial Services,Mid-Market,South,Inbound,Aditi Rao,2023-06-16,2023-06-01,P001,P001,Active
+C0154,Indus Systems 154,Healthcare,Large Enterprise,East,Partner,Meera Iyer,2023-06-04,2023-06-01,P002,P002,Active
+C0155,Quantara Solutions 155,IT Services,Mid-Market,West,Partner,Meera Iyer,2023-06-18,2023-06-01,P001,P001,Active
+C0156,Westlake Enterprises 156,IT Services,Mid-Market,West,Inbound,Aditi Rao,2023-06-10,2023-06-01,P001,P001,Active
+C0157,Quantara Labs 157,Professional Services,Mid-Market,North,Outbound,Arjun Nair,2023-06-07,2023-06-01,P001,P001,Active
+C0158,DigiCore Digital 158,Retail,Mid-Market,East,Outbound,Neha Kapoor,2023-07-05,2023-07-01,P001,P001,Active
+C0159,BluePeak Technologies 159,IT Services,Mid-Market,West,Inbound,Neha Kapoor,2023-07-13,2023-07-01,P001,P001,Active
+C0160,KiteBridge Systems 160,Manufacturing,Mid-Market,North,Events,Meera Iyer,2023-07-05,2023-07-01,P001,P002,Active
+C0161,Vertex Systems 161,Financial Services,Mid-Market,South,Inbound,Sara Khan,2023-07-07,2023-07-01,P001,P002,Active
+C0162,Meridian Systems 162,Healthcare,Mid-Market,West,Inbound,Neha Kapoor,2023-07-12,2023-07-01,P001,P001,Active
+C0163,UrbanStack Enterprises 163,Financial Services,Large Enterprise,West,Outbound,Rahul Mehta,2023-07-16,2023-07-01,P002,P002,Active
+C0164,Zenith Consulting 164,IT Services,Mid-Market,West,Outbound,Rahul Mehta,2023-07-16,2023-07-01,P001,P001,Active
+C0165,SkyGrid Technologies 165,Healthcare,Large Enterprise,West,Inbound,Sara Khan,2023-07-20,2023-07-01,P002,P002,Active
+C0166,Zenith Industries 166,Manufacturing,Mid-Market,South,Partner,Aditi Rao,2023-07-04,2023-07-01,P001,P001,Active
+C0167,Zenith Industries 167,Financial Services,Large Enterprise,North,Partner,Meera Iyer,2023-07-15,2023-07-01,P002,P002,Active
+C0168,Vertex Enterprises 168,Manufacturing,Large Enterprise,West,Partner,Meera Iyer,2023-08-10,2023-08-01,P002,P002,Active
+C0169,Quantara Labs 169,Financial Services,Mid-Market,Central,Inbound,Aditi Rao,2023-08-15,2023-08-01,P001,P001,Churned
+C0170,Westlake Solutions 170,Retail,Mid-Market,Central,Events,Vikram Shah,2023-08-20,2023-08-01,P001,P001,Active
+C0171,Greenline Networks 171,Professional Services,Mid-Market,North,Inbound,Sara Khan,2023-08-18,2023-08-01,P001,P001,Active
+C0172,Vertex Services 172,IT Services,Mid-Market,West,Partner,Meera Iyer,2023-08-01,2023-08-01,P001,P002,Active
+C0173,BluePeak Technologies 173,Manufacturing,Mid-Market,North,Outbound,Arjun Nair,2023-08-03,2023-08-01,P001,P001,Active
+C0174,SkyGrid Labs 174,Healthcare,Mid-Market,North,Referral,Aditi Rao,2023-08-06,2023-08-01,P001,P001,Active
+C0175,Aarav Systems 175,Professional Services,Large Enterprise,North,Outbound,Arjun Nair,2023-08-03,2023-08-01,P002,P002,Churned
+C0176,BluePeak Solutions 176,IT Services,Mid-Market,South,Events,Meera Iyer,2023-08-11,2023-08-01,P001,P001,Active
+C0177,Jupiter Enterprises 177,Financial Services,Mid-Market,North,Partner,Vikram Shah,2023-08-16,2023-08-01,P001,P001,Active
+C0178,HexaWorks Consulting 178,Professional Services,Large Enterprise,South,Outbound,Arjun Nair,2023-09-02,2023-09-01,P002,P002,Active
+C0179,DigiCore Solutions 179,Financial Services,Large Enterprise,South,Outbound,Neha Kapoor,2023-09-09,2023-09-01,P002,P002,Active
+C0180,Zenith Solutions 180,Financial Services,Large Enterprise,East,Referral,Meera Iyer,2023-09-15,2023-09-01,P002,P002,Active
+C0181,Jupiter Consulting 181,Healthcare,Large Enterprise,North,Events,Arjun Nair,2023-09-01,2023-09-01,P002,P002,Active
+C0182,FinAxis Labs 182,Financial Services,Large Enterprise,North,Partner,Meera Iyer,2023-09-19,2023-09-01,P002,P002,Active
+C0183,Zenith Industries 183,Manufacturing,Mid-Market,North,Inbound,Neha Kapoor,2023-09-15,2023-09-01,P001,P002,Active
+C0184,SkyGrid Consulting 184,Manufacturing,Mid-Market,South,Outbound,Neha Kapoor,2023-09-13,2023-09-01,P001,P001,Active
+C0185,Indus Industries 185,Professional Services,Large Enterprise,East,Partner,Meera Iyer,2023-09-04,2023-09-01,P002,P002,Active
+C0186,Lumina Consulting 186,IT Services,Mid-Market,North,Events,Meera Iyer,2023-09-01,2023-09-01,P001,P002,Active
+C0187,Jupiter Solutions 187,Retail,Mid-Market,South,Inbound,Aditi Rao,2023-09-18,2023-09-01,P001,P002,Active
+C0188,Westlake Digital 188,IT Services,Large Enterprise,South,Inbound,Aditi Rao,2023-09-15,2023-09-01,P002,P002,Active
+C0189,Westlake Networks 189,Professional Services,Mid-Market,West,Referral,Sara Khan,2023-09-11,2023-09-01,P001,P001,Active
+C0190,Cobalt Labs 190,Manufacturing,Large Enterprise,North,Referral,Aditi Rao,2023-09-19,2023-09-01,P002,P002,Active
+C0191,DigiCore Systems 191,IT Services,Mid-Market,West,Inbound,Neha Kapoor,2023-10-17,2023-10-01,P001,P001,Active
+C0192,Vertex Services 192,Manufacturing,Large Enterprise,Central,Inbound,Neha Kapoor,2023-10-12,2023-10-01,P002,P002,Active
+C0193,Meridian Technologies 193,Professional Services,Large Enterprise,North,Partner,Vikram Shah,2023-10-10,2023-10-01,P002,P002,Active
+C0194,Nexora Solutions 194,Financial Services,Mid-Market,South,Events,Meera Iyer,2023-10-10,2023-10-01,P001,P002,Active
+C0195,FinAxis Networks 195,Manufacturing,Large Enterprise,South,Partner,Vikram Shah,2023-10-04,2023-10-01,P002,P002,Active
+C0196,Greenline Labs 196,Manufacturing,Mid-Market,West,Inbound,Aditi Rao,2023-10-16,2023-10-01,P001,P002,Churned
+C0197,Jupiter Solutions 197,Healthcare,Mid-Market,East,Referral,Aditi Rao,2023-10-09,2023-10-01,P001,P002,Active
+C0198,Nexora Digital 198,IT Services,Mid-Market,South,Inbound,Neha Kapoor,2023-10-08,2023-10-01,P001,P002,Active
+C0199,SkyGrid Networks 199,Manufacturing,Mid-Market,Central,Partner,Meera Iyer,2023-10-13,2023-10-01,P001,P001,Active
+C0200,Greenline Industries 200,IT Services,Mid-Market,South,Events,Meera Iyer,2023-10-12,2023-10-01,P001,P001,Active
+C0201,DigiCore Systems 201,Financial Services,Large Enterprise,Central,Partner,Vikram Shah,2023-10-07,2023-10-01,P002,P002,Active
+C0202,Jupiter Enterprises 202,Healthcare,Mid-Market,West,Partner,Meera Iyer,2023-10-06,2023-10-01,P001,P001,Active
+C0203,UrbanStack Digital 203,Financial Services,Mid-Market,West,Referral,Aditi Rao,2023-11-08,2023-11-01,P001,P001,Active
+C0204,Westlake Industries 204,Retail,Mid-Market,North,Referral,Sara Khan,2023-11-02,2023-11-01,P001,P001,Active
+C0205,Riverbend Digital 205,Professional Services,Mid-Market,South,Events,Vikram Shah,2023-11-05,2023-11-01,P001,P001,Active
+C0206,DigiCore Services 206,Financial Services,Large Enterprise,West,Outbound,Rahul Mehta,2023-11-06,2023-11-01,P002,P002,Active
+C0207,FinAxis Networks 207,Manufacturing,Mid-Market,North,Partner,Vikram Shah,2023-11-01,2023-11-01,P001,P001,Active
+C0208,Vertex Technologies 208,IT Services,Mid-Market,Central,Outbound,Neha Kapoor,2023-11-16,2023-11-01,P001,P002,Active
+C0209,Cobalt Digital 209,Professional Services,Mid-Market,North,Outbound,Rahul Mehta,2023-11-09,2023-11-01,P001,P002,Active
+C0210,Greenline Labs 210,Financial Services,Mid-Market,East,Partner,Vikram Shah,2023-11-04,2023-11-01,P001,P001,Churned
+C0211,Westlake Systems 211,Healthcare,Large Enterprise,South,Partner,Meera Iyer,2023-11-16,2023-11-01,P002,P002,Active
+C0212,Quantara Industries 212,Manufacturing,Large Enterprise,East,Events,Arjun Nair,2023-11-05,2023-11-01,P002,P002,Active
+C0213,Riverbend Services 213,Retail,Large Enterprise,West,Partner,Vikram Shah,2023-11-13,2023-11-01,P002,P002,Active
+C0214,DigiCore Solutions 214,Financial Services,Mid-Market,South,Inbound,Neha Kapoor,2023-12-15,2023-12-01,P001,P001,Active
+C0215,Meridian Consulting 215,Manufacturing,Large Enterprise,East,Partner,Meera Iyer,2023-12-12,2023-12-01,P002,P002,Active
+C0216,Jupiter Systems 216,Manufacturing,Mid-Market,Central,Outbound,Arjun Nair,2023-12-13,2023-12-01,P001,P002,Active
+C0217,Cobalt Services 217,Professional Services,Mid-Market,West,Outbound,Arjun Nair,2023-12-03,2023-12-01,P001,P001,Active
+C0218,Cobalt Digital 218,Retail,Mid-Market,South,Referral,Aditi Rao,2023-12-15,2023-12-01,P001,P001,Active
+C0219,Everstone Systems 219,Manufacturing,Mid-Market,South,Inbound,Aditi Rao,2023-12-12,2023-12-01,P001,P002,Active
+C0220,Lumina Solutions 220,Manufacturing,Large Enterprise,West,Outbound,Neha Kapoor,2023-12-18,2023-12-01,P002,P002,Active
+C0221,SkyGrid Systems 221,IT Services,Mid-Market,West,Outbound,Rahul Mehta,2023-12-08,2023-12-01,P001,P002,Active
+C0222,BluePeak Systems 222,IT Services,Mid-Market,North,Inbound,Sara Khan,2023-12-02,2023-12-01,P001,P001,Active
+C0223,HexaWorks Solutions 223,Healthcare,Large Enterprise,North,Inbound,Sara Khan,2023-12-16,2023-12-01,P002,P002,Active
+C0224,Aarav Industries 224,Healthcare,Mid-Market,East,Outbound,Rahul Mehta,2024-01-18,2024-01-01,P001,P001,Active
+C0225,SkyGrid Networks 225,Professional Services,Mid-Market,West,Inbound,Aditi Rao,2024-01-12,2024-01-01,P001,P001,Active
+C0226,BluePeak Industries 226,IT Services,Large Enterprise,West,Partner,Meera Iyer,2024-01-02,2024-01-01,P002,P002,Active
+C0227,Westlake Consulting 227,Financial Services,Large Enterprise,East,Outbound,Neha Kapoor,2024-01-01,2024-01-01,P002,P002,Churned
+C0228,Quantara Labs 228,Manufacturing,Mid-Market,North,Partner,Vikram Shah,2024-01-03,2024-01-01,P001,P001,Active
+C0229,Zenith Technologies 229,Healthcare,Mid-Market,North,Inbound,Neha Kapoor,2024-01-10,2024-01-01,P001,P001,Active
+C0230,Greenline Digital 230,Manufacturing,Large Enterprise,South,Inbound,Sara Khan,2024-01-16,2024-01-01,P002,P002,Active
+C0231,UrbanStack Networks 231,Retail,Large Enterprise,North,Outbound,Rahul Mehta,2024-01-19,2024-01-01,P002,P002,Active
+C0232,DigiCore Systems 232,Retail,Mid-Market,South,Partner,Meera Iyer,2024-01-13,2024-01-01,P001,P001,Active
+C0233,Indus Networks 233,Healthcare,Mid-Market,East,Inbound,Aditi Rao,2024-02-06,2024-02-01,P001,P002,Churned
+C0234,Jupiter Technologies 234,Manufacturing,Large Enterprise,South,Inbound,Sara Khan,2024-02-08,2024-02-01,P002,P002,Active
+C0235,Riverbend Industries 235,Healthcare,Mid-Market,North,Referral,Sara Khan,2024-02-20,2024-02-01,P001,P002,Active
+C0236,Nexora Solutions 236,Retail,Large Enterprise,West,Outbound,Rahul Mehta,2024-02-18,2024-02-01,P002,P002,Active
+C0237,UrbanStack Enterprises 237,Manufacturing,Large Enterprise,West,Outbound,Arjun Nair,2024-02-12,2024-02-01,P002,P002,Active
+C0238,Indus Technologies 238,Financial Services,Large Enterprise,West,Partner,Vikram Shah,2024-02-18,2024-02-01,P002,P002,Active
+C0239,HexaWorks Enterprises 239,Retail,Mid-Market,North,Outbound,Rahul Mehta,2024-02-04,2024-02-01,P001,P002,Active
+C0240,Orbit Consulting 240,Manufacturing,Large Enterprise,South,Referral,Meera Iyer,2024-02-03,2024-02-01,P002,P002,Active
+C0241,TrueNorth Enterprises 241,Retail,Mid-Market,South,Referral,Meera Iyer,2024-02-19,2024-02-01,P001,P001,Active
+C0242,Indus Digital 242,Manufacturing,Large Enterprise,East,Referral,Meera Iyer,2024-02-19,2024-02-01,P002,P002,Active
+C0243,PrimeArc Labs 243,Professional Services,Large Enterprise,South,Partner,Meera Iyer,2024-02-20,2024-02-01,P002,P002,Active
+C0244,PrimeArc Technologies 244,Financial Services,Large Enterprise,West,Partner,Aditi Rao,2024-03-20,2024-03-01,P002,P002,Active
+C0245,UrbanStack Solutions 245,Financial Services,Mid-Market,South,Referral,Meera Iyer,2024-03-16,2024-03-01,P001,P001,Active
+C0246,KiteBridge Services 246,Healthcare,Mid-Market,North,Referral,Aditi Rao,2024-03-02,2024-03-01,P001,P001,Active
+C0247,TrueNorth Services 247,Manufacturing,Large Enterprise,West,Referral,Meera Iyer,2024-03-11,2024-03-01,P002,P002,Active
+C0248,Meridian Technologies 248,Healthcare,Large Enterprise,South,Inbound,Neha Kapoor,2024-03-02,2024-03-01,P002,P002,Active
+C0249,Orbit Digital 249,Professional Services,Mid-Market,West,Inbound,Aditi Rao,2024-03-16,2024-03-01,P001,P001,Active
+C0250,Greenline Enterprises 250,IT Services,Large Enterprise,South,Partner,Vikram Shah,2024-03-19,2024-03-01,P002,P002,Active
+C0251,DigiCore Technologies 251,IT Services,Large Enterprise,East,Inbound,Aditi Rao,2024-03-02,2024-03-01,P002,P002,Active
+C0252,Meridian Solutions 252,Professional Services,Large Enterprise,South,Events,Meera Iyer,2024-03-07,2024-03-01,P002,P002,Active
+C0253,Riverbend Technologies 253,Healthcare,Large Enterprise,West,Outbound,Neha Kapoor,2024-03-10,2024-03-01,P002,P002,Active
+C0254,Orbit Labs 254,Financial Services,Mid-Market,West,Partner,Meera Iyer,2024-03-18,2024-03-01,P001,P001,Churned
+C0255,DigiCore Services 255,IT Services,Mid-Market,South,Outbound,Rahul Mehta,2024-03-17,2024-03-01,P001,P001,Churned
+C0256,UrbanStack Solutions 256,Manufacturing,Mid-Market,East,Outbound,Arjun Nair,2024-03-12,2024-03-01,P001,P001,Active
+C0257,BluePeak Solutions 257,Professional Services,Large Enterprise,Central,Partner,Meera Iyer,2024-04-11,2024-04-01,P002,P002,Active
+C0258,Aarav Systems 258,Manufacturing,Large Enterprise,East,Events,Meera Iyer,2024-04-03,2024-04-01,P002,P002,Active
+C0259,Aarav Industries 259,IT Services,Mid-Market,West,Partner,Vikram Shah,2024-04-12,2024-04-01,P001,P001,Active
+C0260,Westlake Labs 260,Financial Services,Mid-Market,East,Outbound,Rahul Mehta,2024-04-15,2024-04-01,P001,P001,Active
+C0261,BluePeak Enterprises 261,IT Services,Large Enterprise,West,Outbound,Neha Kapoor,2024-04-03,2024-04-01,P002,P002,Active
+C0262,Everstone Labs 262,Retail,Mid-Market,South,Inbound,Sara Khan,2024-04-03,2024-04-01,P001,P001,Active
+C0263,BluePeak Services 263,Financial Services,Mid-Market,Central,Referral,Meera Iyer,2024-04-03,2024-04-01,P001,P001,Active
+C0264,Vertex Digital 264,Professional Services,Mid-Market,North,Outbound,Neha Kapoor,2024-04-13,2024-04-01,P001,P002,Active
+C0265,Quantara Networks 265,Financial Services,Mid-Market,East,Inbound,Sara Khan,2024-04-15,2024-04-01,P001,P001,Active
+C0266,Orbit Systems 266,Manufacturing,Large Enterprise,South,Events,Vikram Shah,2024-04-05,2024-04-01,P002,P002,Active
+C0267,Meridian Consulting 267,Manufacturing,Mid-Market,East,Inbound,Neha Kapoor,2024-04-20,2024-04-01,P001,P001,Active
+C0268,Nexora Enterprises 268,Financial Services,Large Enterprise,North,Inbound,Neha Kapoor,2024-05-14,2024-05-01,P002,P002,Active
+C0269,BluePeak Solutions 269,Financial Services,Mid-Market,West,Partner,Aditi Rao,2024-05-09,2024-05-01,P001,P002,Active
+C0270,Jupiter Solutions 270,IT Services,Large Enterprise,North,Events,Meera Iyer,2024-05-20,2024-05-01,P002,P002,Active
+C0271,Orbit Systems 271,Healthcare,Mid-Market,Central,Inbound,Sara Khan,2024-05-12,2024-05-01,P001,P001,Churned
+C0272,UrbanStack Solutions 272,IT Services,Large Enterprise,North,Events,Meera Iyer,2024-05-02,2024-05-01,P002,P002,Active
+C0273,Riverbend Systems 273,IT Services,Large Enterprise,East,Partner,Meera Iyer,2024-05-20,2024-05-01,P002,P002,Churned
+C0274,Everstone Technologies 274,Manufacturing,Large Enterprise,South,Partner,Vikram Shah,2024-05-07,2024-05-01,P002,P002,Active
+C0275,Riverbend Digital 275,IT Services,Large Enterprise,West,Referral,Meera Iyer,2024-05-12,2024-05-01,P002,P002,Active
+C0276,FinAxis Consulting 276,IT Services,Large Enterprise,South,Outbound,Rahul Mehta,2024-05-05,2024-05-01,P002,P002,Active
+C0277,KiteBridge Services 277,IT Services,Mid-Market,South,Outbound,Arjun Nair,2024-05-16,2024-05-01,P001,P001,Active
+C0278,Greenline Consulting 278,Healthcare,Mid-Market,South,Outbound,Rahul Mehta,2024-05-08,2024-05-01,P001,P001,Churned
+C0279,Everstone Enterprises 279,IT Services,Mid-Market,West,Inbound,Aditi Rao,2024-05-03,2024-05-01,P001,P001,Active
+C0280,FinAxis Networks 280,Retail,Mid-Market,West,Outbound,Rahul Mehta,2024-06-12,2024-06-01,P001,P001,Churned
+C0281,FinAxis Digital 281,Retail,Large Enterprise,West,Events,Vikram Shah,2024-06-16,2024-06-01,P002,P002,Active
+C0282,KiteBridge Services 282,Manufacturing,Large Enterprise,West,Events,Meera Iyer,2024-06-06,2024-06-01,P002,P002,Active
+C0283,Cobalt Technologies 283,Manufacturing,Mid-Market,South,Inbound,Sara Khan,2024-06-02,2024-06-01,P001,P001,Active
+C0284,BluePeak Labs 284,Financial Services,Large Enterprise,North,Events,Vikram Shah,2024-06-20,2024-06-01,P002,P002,Active
+C0285,HexaWorks Systems 285,Healthcare,Mid-Market,Central,Partner,Vikram Shah,2024-06-20,2024-06-01,P001,P001,Active
+C0286,DigiCore Services 286,IT Services,Mid-Market,West,Inbound,Sara Khan,2024-06-18,2024-06-01,P001,P001,Churned
+C0287,Indus Solutions 287,Healthcare,Large Enterprise,West,Outbound,Neha Kapoor,2024-06-06,2024-06-01,P002,P002,Active
+C0288,Jupiter Systems 288,Professional Services,Mid-Market,South,Partner,Aditi Rao,2024-06-19,2024-06-01,P001,P002,Active
+C0289,FinAxis Services 289,Retail,Large Enterprise,East,Inbound,Sara Khan,2024-06-03,2024-06-01,P002,P002,Active
+C0290,SkyGrid Systems 290,Retail,Mid-Market,North,Referral,Meera Iyer,2024-06-17,2024-06-01,P001,P002,Active
+C0291,Meridian Enterprises 291,Manufacturing,Large Enterprise,West,Events,Arjun Nair,2024-06-14,2024-06-01,P002,P002,Churned
+C0292,DigiCore Digital 292,Retail,Large Enterprise,West,Outbound,Rahul Mehta,2024-06-14,2024-06-01,P002,P002,Active
+C0293,UrbanStack Digital 293,Healthcare,Large Enterprise,West,Referral,Meera Iyer,2024-07-11,2024-07-01,P002,P002,Active
+C0294,Orbit Systems 294,Professional Services,Mid-Market,Central,Inbound,Sara Khan,2024-07-09,2024-07-01,P001,P001,Active
+C0295,Nexora Solutions 295,Professional Services,Mid-Market,East,Outbound,Rahul Mehta,2024-07-16,2024-07-01,P001,P002,Active
+C0296,KiteBridge Industries 296,IT Services,Large Enterprise,North,Outbound,Rahul Mehta,2024-07-06,2024-07-01,P002,P002,Active
+C0297,Zenith Solutions 297,Financial Services,Mid-Market,South,Referral,Sara Khan,2024-07-20,2024-07-01,P001,P001,Active
+C0298,Zenith Solutions 298,Healthcare,Mid-Market,West,Outbound,Rahul Mehta,2024-07-05,2024-07-01,P001,P001,Active
+C0299,FinAxis Technologies 299,Professional Services,Large Enterprise,East,Inbound,Sara Khan,2024-07-04,2024-07-01,P002,P002,Active
+C0300,DigiCore Systems 300,IT Services,Mid-Market,West,Partner,Vikram Shah,2024-07-11,2024-07-01,P001,P002,Active
+C0301,Nexora Enterprises 301,Financial Services,Large Enterprise,West,Outbound,Rahul Mehta,2024-07-10,2024-07-01,P002,P002,Active
+C0302,Aarav Solutions 302,Healthcare,Large Enterprise,West,Partner,Vikram Shah,2024-07-08,2024-07-01,P002,P002,Active
+C0303,UrbanStack Solutions 303,IT Services,Large Enterprise,East,Events,Vikram Shah,2024-07-03,2024-07-01,P002,P002,Active
+C0304,FinAxis Digital 304,IT Services,Large Enterprise,East,Inbound,Aditi Rao,2024-07-14,2024-07-01,P002,P002,Active
+C0305,PrimeArc Consulting 305,Healthcare,Mid-Market,North,Referral,Aditi Rao,2024-08-12,2024-08-01,P001,P001,Active
+C0306,KiteBridge Solutions 306,Professional Services,Mid-Market,South,Inbound,Aditi Rao,2024-08-02,2024-08-01,P001,P001,Active
+C0307,FinAxis Industries 307,Professional Services,Large Enterprise,West,Events,Arjun Nair,2024-08-18,2024-08-01,P002,P002,Active
+C0308,Greenline Enterprises 308,IT Services,Mid-Market,East,Events,Meera Iyer,2024-08-01,2024-08-01,P001,P002,Active
+C0309,DigiCore Technologies 309,IT Services,Large Enterprise,North,Outbound,Neha Kapoor,2024-08-19,2024-08-01,P002,P002,Active
+C0310,TrueNorth Labs 310,Professional Services,Large Enterprise,West,Outbound,Neha Kapoor,2024-08-14,2024-08-01,P002,P002,Active
+C0311,UrbanStack Services 311,Financial Services,Mid-Market,South,Outbound,Arjun Nair,2024-08-04,2024-08-01,P001,P001,Active
+C0312,FinAxis Enterprises 312,Manufacturing,Mid-Market,East,Outbound,Rahul Mehta,2024-08-07,2024-08-01,P001,P001,Active
+C0313,Meridian Digital 313,Healthcare,Mid-Market,North,Partner,Vikram Shah,2024-08-17,2024-08-01,P001,P001,Active
+C0314,Quantara Labs 314,Professional Services,Large Enterprise,West,Inbound,Sara Khan,2024-08-13,2024-08-01,P002,P002,Active
+C0315,UrbanStack Services 315,Healthcare,Mid-Market,South,Outbound,Neha Kapoor,2024-08-05,2024-08-01,P001,P001,Active
+C0316,BluePeak Digital 316,Professional Services,Large Enterprise,North,Events,Arjun Nair,2024-08-16,2024-08-01,P002,P002,Active
+C0317,Orbit Services 317,Healthcare,Large Enterprise,West,Outbound,Neha Kapoor,2024-09-09,2024-09-01,P002,P002,Active
+C0318,Quantara Industries 318,Healthcare,Large Enterprise,South,Partner,Aditi Rao,2024-09-05,2024-09-01,P002,P002,Active
+C0319,Vertex Digital 319,IT Services,Large Enterprise,West,Outbound,Neha Kapoor,2024-09-03,2024-09-01,P002,P002,Active
+C0320,FinAxis Consulting 320,Manufacturing,Large Enterprise,South,Outbound,Arjun Nair,2024-09-08,2024-09-01,P002,P002,Active
+C0321,Zenith Networks 321,Financial Services,Large Enterprise,South,Outbound,Rahul Mehta,2024-09-03,2024-09-01,P002,P002,Active
+C0322,Orbit Enterprises 322,IT Services,Mid-Market,West,Outbound,Neha Kapoor,2024-09-01,2024-09-01,P001,P002,Active
+C0323,Everstone Industries 323,IT Services,Mid-Market,West,Outbound,Neha Kapoor,2024-09-01,2024-09-01,P001,P001,Active
+C0324,FinAxis Services 324,Healthcare,Mid-Market,South,Outbound,Arjun Nair,2024-09-17,2024-09-01,P001,P001,Active
+C0325,Orbit Technologies 325,IT Services,Mid-Market,North,Partner,Vikram Shah,2024-09-02,2024-09-01,P001,P001,Active
+C0326,Meridian Enterprises 326,IT Services,Mid-Market,South,Inbound,Sara Khan,2024-09-16,2024-09-01,P001,P001,Active
+C0327,Nexora Technologies 327,IT Services,Large Enterprise,West,Referral,Sara Khan,2024-09-19,2024-09-01,P002,P002,Active
+C0328,Riverbend Networks 328,Manufacturing,Large Enterprise,West,Events,Meera Iyer,2024-09-07,2024-09-01,P002,P002,Churned
+C0329,HexaWorks Labs 329,Manufacturing,Large Enterprise,South,Inbound,Aditi Rao,2024-09-02,2024-09-01,P002,P002,Active
+C0330,HexaWorks Consulting 330,Healthcare,Large Enterprise,North,Partner,Meera Iyer,2024-09-12,2024-09-01,P002,P002,Active
+C0331,FinAxis Digital 331,Manufacturing,Mid-Market,West,Events,Meera Iyer,2024-10-14,2024-10-01,P001,P001,Active
+C0332,Aarav Technologies 332,Retail,Mid-Market,West,Outbound,Neha Kapoor,2024-10-17,2024-10-01,P001,P001,Active
+C0333,KiteBridge Services 333,Manufacturing,Mid-Market,West,Inbound,Neha Kapoor,2024-10-04,2024-10-01,P001,P001,Active
+C0334,UrbanStack Enterprises 334,IT Services,Large Enterprise,West,Events,Arjun Nair,2024-10-10,2024-10-01,P002,P002,Active
+C0335,Vertex Systems 335,IT Services,Large Enterprise,West,Events,Vikram Shah,2024-10-01,2024-10-01,P002,P002,Active
+C0336,UrbanStack Enterprises 336,Manufacturing,Mid-Market,North,Outbound,Rahul Mehta,2024-10-17,2024-10-01,P001,P001,Active
+C0337,Quantara Networks 337,Healthcare,Mid-Market,West,Partner,Aditi Rao,2024-10-14,2024-10-01,P001,P001,Active
+C0338,PrimeArc Networks 338,IT Services,Mid-Market,North,Events,Arjun Nair,2024-10-07,2024-10-01,P001,P002,Active
+C0339,Westlake Solutions 339,IT Services,Mid-Market,South,Referral,Sara Khan,2024-10-17,2024-10-01,P001,P001,Active
+C0340,Orbit Consulting 340,Financial Services,Mid-Market,South,Partner,Meera Iyer,2024-10-02,2024-10-01,P001,P001,Active
+C0341,UrbanStack Labs 341,Financial Services,Large Enterprise,North,Partner,Meera Iyer,2024-10-14,2024-10-01,P002,P002,Active
+C0342,PrimeArc Consulting 342,IT Services,Mid-Market,Central,Outbound,Neha Kapoor,2024-10-20,2024-10-01,P001,P001,Churned
+C0343,Riverbend Technologies 343,IT Services,Mid-Market,West,Outbound,Neha Kapoor,2024-10-19,2024-10-01,P001,P001,Active
+C0344,Vertex Services 344,IT Services,Mid-Market,West,Outbound,Arjun Nair,2024-11-05,2024-11-01,P001,P002,Active
+C0345,UrbanStack Networks 345,Financial Services,Large Enterprise,West,Events,Arjun Nair,2024-11-08,2024-11-01,P002,P002,Active
+C0346,Quantara Industries 346,Retail,Large Enterprise,North,Inbound,Aditi Rao,2024-11-07,2024-11-01,P002,P002,Active
+C0347,PrimeArc Digital 347,Manufacturing,Mid-Market,North,Referral,Meera Iyer,2024-11-13,2024-11-01,P001,P001,Active
+C0348,PrimeArc Solutions 348,Healthcare,Large Enterprise,West,Outbound,Arjun Nair,2024-11-08,2024-11-01,P002,P002,Active
+C0349,FinAxis Networks 349,Manufacturing,Large Enterprise,North,Events,Arjun Nair,2024-11-08,2024-11-01,P002,P002,Active
+C0350,Zenith Services 350,Professional Services,Mid-Market,South,Outbound,Rahul Mehta,2024-11-06,2024-11-01,P001,P002,Active
+C0351,SkyGrid Networks 351,Healthcare,Mid-Market,North,Outbound,Rahul Mehta,2024-11-10,2024-11-01,P001,P001,Churned
+C0352,Aarav Networks 352,Professional Services,Mid-Market,West,Events,Meera Iyer,2024-11-13,2024-11-01,P001,P001,Active
+C0353,PrimeArc Services 353,Healthcare,Mid-Market,North,Referral,Aditi Rao,2024-11-12,2024-11-01,P001,P001,Active
+C0354,BluePeak Networks 354,IT Services,Large Enterprise,South,Events,Arjun Nair,2024-11-19,2024-11-01,P002,P002,Active
+C0355,Everstone Labs 355,Financial Services,Large Enterprise,East,Partner,Meera Iyer,2024-11-08,2024-11-01,P002,P002,Active
+C0356,Lumina Systems 356,Financial Services,Mid-Market,West,Referral,Aditi Rao,2024-12-11,2024-12-01,P001,P001,Active
+C0357,Jupiter Consulting 357,Financial Services,Mid-Market,East,Inbound,Neha Kapoor,2024-12-05,2024-12-01,P001,P001,Active
+C0358,Lumina Industries 358,Retail,Large Enterprise,South,Partner,Vikram Shah,2024-12-19,2024-12-01,P002,P002,Active
+C0359,Orbit Enterprises 359,IT Services,Mid-Market,South,Referral,Meera Iyer,2024-12-07,2024-12-01,P001,P001,Active
+C0360,Everstone Enterprises 360,Professional Services,Mid-Market,West,Outbound,Arjun Nair,2024-12-12,2024-12-01,P001,P001,Active
+C0361,Greenline Solutions 361,Professional Services,Mid-Market,West,Events,Meera Iyer,2024-12-17,2024-12-01,P001,P001,Active
+C0362,Aarav Systems 362,Retail,Large Enterprise,South,Partner,Meera Iyer,2024-12-17,2024-12-01,P002,P002,Active
+C0363,Lumina Services 363,Financial Services,Mid-Market,North,Outbound,Neha Kapoor,2024-12-14,2024-12-01,P001,P001,Active
+C0364,Riverbend Labs 364,Retail,Large Enterprise,East,Partner,Aditi Rao,2024-12-11,2024-12-01,P002,P002,Active
+C0365,Aarav Networks 365,Financial Services,Mid-Market,Central,Referral,Meera Iyer,2024-12-20,2024-12-01,P001,P001,Active
+C0366,TrueNorth Enterprises 366,IT Services,Large Enterprise,Central,Inbound,Aditi Rao,2024-12-10,2024-12-01,P002,P002,Churned
+C0367,Quantara Enterprises 367,Financial Services,Mid-Market,South,Outbound,Rahul Mehta,2025-01-11,2025-01-01,P001,P001,Active
+C0368,PrimeArc Networks 368,Financial Services,Mid-Market,North,Referral,Meera Iyer,2025-01-08,2025-01-01,P001,P001,Active
+C0369,Greenline Industries 369,IT Services,Mid-Market,East,Outbound,Neha Kapoor,2025-01-05,2025-01-01,P001,P001,Active
+C0370,Orbit Labs 370,Retail,Mid-Market,North,Inbound,Aditi Rao,2025-01-07,2025-01-01,P001,P001,Active
+C0371,KiteBridge Networks 371,IT Services,Large Enterprise,North,Outbound,Arjun Nair,2025-01-17,2025-01-01,P002,P002,Active
+C0372,Greenline Digital 372,Manufacturing,Large Enterprise,South,Events,Arjun Nair,2025-01-12,2025-01-01,P002,P002,Active
+C0373,PrimeArc Services 373,Professional Services,Large Enterprise,South,Referral,Aditi Rao,2025-01-18,2025-01-01,P002,P002,Active
+C0374,Westlake Solutions 374,IT Services,Large Enterprise,South,Outbound,Arjun Nair,2025-01-02,2025-01-01,P002,P002,Active
+C0375,BluePeak Technologies 375,Retail,Mid-Market,South,Outbound,Arjun Nair,2025-01-02,2025-01-01,P001,P001,Churned
+C0376,Nexora Industries 376,Manufacturing,Large Enterprise,Central,Inbound,Sara Khan,2025-01-12,2025-01-01,P002,P002,Active
+C0377,Orbit Labs 377,Manufacturing,Mid-Market,North,Outbound,Arjun Nair,2025-01-09,2025-01-01,P001,P001,Churned
+C0378,Aarav Technologies 378,Healthcare,Mid-Market,North,Inbound,Neha Kapoor,2025-02-09,2025-02-01,P001,P001,Active
+C0379,Riverbend Networks 379,Retail,Large Enterprise,North,Outbound,Arjun Nair,2025-02-07,2025-02-01,P002,P002,Churned
+C0380,Greenline Labs 380,IT Services,Large Enterprise,West,Events,Arjun Nair,2025-02-06,2025-02-01,P002,P002,Active
+C0381,BluePeak Solutions 381,Financial Services,Mid-Market,East,Partner,Meera Iyer,2025-02-12,2025-02-01,P001,P001,Active
+C0382,Indus Technologies 382,Manufacturing,Mid-Market,South,Outbound,Arjun Nair,2025-02-11,2025-02-01,P001,P001,Active
+C0383,Cobalt Services 383,IT Services,Mid-Market,South,Partner,Aditi Rao,2025-02-11,2025-02-01,P001,P001,Active
+C0384,DigiCore Consulting 384,Financial Services,Large Enterprise,East,Partner,Vikram Shah,2025-02-19,2025-02-01,P002,P002,Active
+C0385,PrimeArc Technologies 385,Retail,Mid-Market,East,Inbound,Neha Kapoor,2025-02-01,2025-02-01,P001,P001,Active
+C0386,UrbanStack Industries 386,Manufacturing,Large Enterprise,South,Partner,Vikram Shah,2025-02-09,2025-02-01,P002,P002,Active
+C0387,Zenith Technologies 387,Professional Services,Mid-Market,West,Partner,Meera Iyer,2025-02-10,2025-02-01,P001,P001,Churned
+C0388,Cobalt Solutions 388,Financial Services,Mid-Market,Central,Partner,Meera Iyer,2025-02-01,2025-02-01,P001,P001,Active
+C0389,Quantara Enterprises 389,Financial Services,Large Enterprise,Central,Partner,Meera Iyer,2025-02-20,2025-02-01,P002,P002,Churned
+C0390,Everstone Systems 390,Financial Services,Large Enterprise,West,Outbound,Rahul Mehta,2025-02-11,2025-02-01,P002,P002,Active
+C0391,Jupiter Enterprises 391,IT Services,Large Enterprise,West,Events,Arjun Nair,2025-03-15,2025-03-01,P002,P002,Active
+C0392,Everstone Consulting 392,Financial Services,Mid-Market,West,Partner,Meera Iyer,2025-03-15,2025-03-01,P001,P001,Active
+C0393,Jupiter Enterprises 393,Financial Services,Mid-Market,South,Inbound,Aditi Rao,2025-03-20,2025-03-01,P001,P001,Active
+C0394,BluePeak Labs 394,Financial Services,Large Enterprise,North,Partner,Vikram Shah,2025-03-19,2025-03-01,P002,P002,Active
+C0395,DigiCore Solutions 395,Manufacturing,Mid-Market,East,Referral,Meera Iyer,2025-03-19,2025-03-01,P001,P001,Active
+C0396,Jupiter Technologies 396,Healthcare,Large Enterprise,South,Events,Arjun Nair,2025-03-11,2025-03-01,P002,P002,Active
+C0397,Jupiter Digital 397,IT Services,Mid-Market,South,Partner,Aditi Rao,2025-03-06,2025-03-01,P001,P001,Active
+C0398,FinAxis Digital 398,IT Services,Large Enterprise,West,Events,Meera Iyer,2025-03-20,2025-03-01,P002,P002,Active
+C0399,KiteBridge Networks 399,IT Services,Large Enterprise,Central,Partner,Vikram Shah,2025-03-16,2025-03-01,P002,P002,Active
+C0400,PrimeArc Networks 400,Healthcare,Mid-Market,South,Outbound,Rahul Mehta,2025-03-01,2025-03-01,P001,P001,Active
+C0401,Quantara Industries 401,Professional Services,Large Enterprise,West,Partner,Aditi Rao,2025-03-03,2025-03-01,P002,P002,Active
+C0402,TrueNorth Technologies 402,Financial Services,Mid-Market,South,Inbound,Aditi Rao,2025-03-05,2025-03-01,P001,P001,Active
+C0403,Greenline Networks 403,Retail,Mid-Market,East,Referral,Aditi Rao,2025-03-05,2025-03-01,P001,P001,Active
+C0404,Meridian Services 404,Professional Services,Mid-Market,Central,Referral,Meera Iyer,2025-03-07,2025-03-01,P001,P001,Active
+C0405,Vertex Industries 405,Professional Services,Mid-Market,West,Events,Vikram Shah,2025-03-02,2025-03-01,P001,P001,Active
+C0406,Riverbend Industries 406,Manufacturing,Mid-Market,South,Outbound,Arjun Nair,2025-04-15,2025-04-01,P001,P001,Active
+C0407,Indus Services 407,Financial Services,Mid-Market,North,Outbound,Neha Kapoor,2025-04-06,2025-04-01,P001,P001,Active
+C0408,UrbanStack Industries 408,Healthcare,Mid-Market,Central,Outbound,Arjun Nair,2025-04-11,2025-04-01,P001,P001,Active
+C0409,Greenline Digital 409,Manufacturing,Mid-Market,South,Partner,Vikram Shah,2025-04-14,2025-04-01,P001,P001,Active
+C0410,Jupiter Labs 410,Professional Services,Mid-Market,South,Referral,Aditi Rao,2025-04-10,2025-04-01,P001,P001,Active
+C0411,UrbanStack Technologies 411,Professional Services,Mid-Market,North,Partner,Aditi Rao,2025-04-17,2025-04-01,P001,P001,Active
+C0412,Lumina Services 412,Manufacturing,Mid-Market,West,Inbound,Neha Kapoor,2025-04-04,2025-04-01,P001,P001,Active
+C0413,Zenith Systems 413,IT Services,Mid-Market,South,Referral,Meera Iyer,2025-04-14,2025-04-01,P001,P001,Active
+C0414,KiteBridge Technologies 414,IT Services,Large Enterprise,West,Inbound,Neha Kapoor,2025-04-19,2025-04-01,P002,P002,Active
+C0415,TrueNorth Systems 415,IT Services,Mid-Market,South,Outbound,Arjun Nair,2025-04-11,2025-04-01,P001,P001,Active
+C0416,SkyGrid Digital 416,IT Services,Mid-Market,North,Inbound,Sara Khan,2025-04-03,2025-04-01,P001,P001,Active
+C0417,Vertex Solutions 417,Retail,Large Enterprise,North,Outbound,Neha Kapoor,2025-04-16,2025-04-01,P002,P002,Active
+C0418,Westlake Consulting 418,Manufacturing,Large Enterprise,East,Outbound,Rahul Mehta,2025-04-08,2025-04-01,P002,P002,Active
+C0419,FinAxis Solutions 419,IT Services,Large Enterprise,South,Outbound,Arjun Nair,2025-05-20,2025-05-01,P002,P002,Active
+C0420,Zenith Enterprises 420,Healthcare,Mid-Market,West,Inbound,Sara Khan,2025-05-16,2025-05-01,P001,P001,Active
+C0421,Lumina Solutions 421,IT Services,Large Enterprise,West,Partner,Meera Iyer,2025-05-10,2025-05-01,P002,P002,Active
+C0422,Lumina Consulting 422,Financial Services,Mid-Market,West,Inbound,Aditi Rao,2025-05-04,2025-05-01,P001,P001,Active
+C0423,BluePeak Consulting 423,Professional Services,Mid-Market,South,Outbound,Neha Kapoor,2025-05-01,2025-05-01,P001,P001,Active
+C0424,Nexora Digital 424,Financial Services,Mid-Market,South,Referral,Sara Khan,2025-05-18,2025-05-01,P001,P001,Active
+C0425,FinAxis Networks 425,IT Services,Mid-Market,South,Events,Vikram Shah,2025-05-14,2025-05-01,P001,P001,Active
+C0426,PrimeArc Enterprises 426,Manufacturing,Large Enterprise,East,Referral,Sara Khan,2025-05-09,2025-05-01,P002,P002,Active
+C0427,HexaWorks Services 427,Professional Services,Large Enterprise,South,Partner,Aditi Rao,2025-05-04,2025-05-01,P002,P002,Active
+C0428,Riverbend Services 428,IT Services,Large Enterprise,South,Events,Vikram Shah,2025-05-19,2025-05-01,P002,P002,Active
+C0429,Vertex Systems 429,Retail,Large Enterprise,West,Partner,Aditi Rao,2025-05-08,2025-05-01,P002,P002,Active
+C0430,FinAxis Enterprises 430,IT Services,Large Enterprise,South,Inbound,Aditi Rao,2025-05-18,2025-05-01,P002,P002,Active
+C0431,Zenith Systems 431,Manufacturing,Large Enterprise,South,Outbound,Rahul Mehta,2025-05-11,2025-05-01,P002,P002,Active
+C0432,FinAxis Industries 432,Financial Services,Mid-Market,North,Referral,Aditi Rao,2025-06-06,2025-06-01,P001,P001,Active
+C0433,FinAxis Networks 433,Manufacturing,Mid-Market,South,Partner,Aditi Rao,2025-06-19,2025-06-01,P001,P001,Active
+C0434,Indus Enterprises 434,IT Services,Large Enterprise,North,Partner,Meera Iyer,2025-06-18,2025-06-01,P002,P002,Active
+C0435,SkyGrid Labs 435,Professional Services,Mid-Market,West,Inbound,Aditi Rao,2025-06-11,2025-06-01,P001,P001,Active
+C0436,HexaWorks Enterprises 436,IT Services,Mid-Market,South,Inbound,Sara Khan,2025-06-12,2025-06-01,P001,P001,Active
+C0437,Nexora Labs 437,IT Services,Mid-Market,South,Inbound,Neha Kapoor,2025-06-20,2025-06-01,P001,P001,Active
+C0438,Cobalt Consulting 438,Financial Services,Large Enterprise,Central,Events,Meera Iyer,2025-06-09,2025-06-01,P002,P002,Active
+C0439,TrueNorth Enterprises 439,Financial Services,Mid-Market,North,Outbound,Rahul Mehta,2025-06-10,2025-06-01,P001,P001,Active
+C0440,BluePeak Industries 440,Manufacturing,Mid-Market,East,Events,Vikram Shah,2025-06-01,2025-06-01,P001,P001,Active
+C0441,Greenline Systems 441,IT Services,Mid-Market,West,Inbound,Sara Khan,2025-06-17,2025-06-01,P001,P001,Active
+C0442,Jupiter Services 442,Manufacturing,Large Enterprise,Central,Partner,Aditi Rao,2025-06-18,2025-06-01,P002,P002,Active
+C0443,Nexora Services 443,Healthcare,Large Enterprise,West,Partner,Aditi Rao,2025-06-09,2025-06-01,P002,P002,Active
+C0444,Aarav Labs 444,Professional Services,Mid-Market,South,Partner,Vikram Shah,2025-06-17,2025-06-01,P001,P001,Active
+C0445,Quantara Enterprises 445,IT Services,Large Enterprise,South,Outbound,Arjun Nair,2025-06-03,2025-06-01,P002,P002,Active
+C0446,Nexora Technologies 446,IT Services,Mid-Market,West,Outbound,Rahul Mehta,2025-07-19,2025-07-01,P001,P001,Active
+C0447,SkyGrid Networks 447,Manufacturing,Mid-Market,North,Partner,Aditi Rao,2025-07-07,2025-07-01,P001,P001,Active
+C0448,HexaWorks Services 448,Manufacturing,Mid-Market,South,Inbound,Sara Khan,2025-07-14,2025-07-01,P001,P001,Active
+C0449,Everstone Labs 449,IT Services,Mid-Market,South,Outbound,Rahul Mehta,2025-07-19,2025-07-01,P001,P001,Active
+C0450,Westlake Enterprises 450,Retail,Large Enterprise,East,Events,Meera Iyer,2025-07-10,2025-07-01,P002,P002,Active
+C0451,PrimeArc Networks 451,Professional Services,Mid-Market,North,Partner,Meera Iyer,2025-07-14,2025-07-01,P001,P001,Active
+C0452,Orbit Services 452,Healthcare,Mid-Market,West,Referral,Aditi Rao,2025-07-10,2025-07-01,P001,P001,Active
+C0453,SkyGrid Technologies 453,Healthcare,Large Enterprise,East,Partner,Meera Iyer,2025-07-03,2025-07-01,P002,P002,Active
+C0454,HexaWorks Industries 454,Financial Services,Large Enterprise,West,Inbound,Aditi Rao,2025-07-12,2025-07-01,P002,P002,Active
+C0455,Orbit Technologies 455,Professional Services,Mid-Market,South,Referral,Sara Khan,2025-07-03,2025-07-01,P001,P001,Active
+C0456,FinAxis Industries 456,Financial Services,Large Enterprise,North,Partner,Aditi Rao,2025-07-18,2025-07-01,P002,P002,Active
+C0457,Cobalt Services 457,Healthcare,Large Enterprise,Central,Partner,Meera Iyer,2025-07-09,2025-07-01,P002,P002,Active
+C0458,BluePeak Technologies 458,IT Services,Mid-Market,Central,Inbound,Sara Khan,2025-07-05,2025-07-01,P001,P001,Active
+C0459,TrueNorth Consulting 459,Professional Services,Large Enterprise,East,Inbound,Sara Khan,2025-08-06,2025-08-01,P002,P002,Active
+C0460,Cobalt Services 460,IT Services,Large Enterprise,South,Inbound,Neha Kapoor,2025-08-10,2025-08-01,P002,P002,Active
+C0461,KiteBridge Industries 461,Healthcare,Mid-Market,West,Outbound,Neha Kapoor,2025-08-05,2025-08-01,P001,P001,Active
+C0462,FinAxis Digital 462,Healthcare,Mid-Market,West,Partner,Vikram Shah,2025-08-05,2025-08-01,P001,P001,Active
+C0463,Jupiter Solutions 463,Healthcare,Large Enterprise,South,Events,Vikram Shah,2025-08-12,2025-08-01,P002,P002,Active
+C0464,Aarav Services 464,Financial Services,Large Enterprise,West,Partner,Vikram Shah,2025-08-09,2025-08-01,P002,P002,Active
+C0465,TrueNorth Digital 465,Professional Services,Mid-Market,South,Inbound,Aditi Rao,2025-08-19,2025-08-01,P001,P001,Active
+C0466,Zenith Consulting 466,Financial Services,Mid-Market,South,Partner,Vikram Shah,2025-08-02,2025-08-01,P001,P001,Active
+C0467,Aarav Industries 467,Healthcare,Mid-Market,West,Referral,Meera Iyer,2025-08-14,2025-08-01,P001,P001,Active
+C0468,BluePeak Networks 468,Healthcare,Large Enterprise,West,Events,Arjun Nair,2025-08-08,2025-08-01,P002,P002,Active
+C0469,SkyGrid Labs 469,Manufacturing,Large Enterprise,South,Events,Meera Iyer,2025-08-05,2025-08-01,P002,P002,Active
+C0470,Lumina Solutions 470,Healthcare,Large Enterprise,South,Outbound,Rahul Mehta,2025-08-19,2025-08-01,P002,P002,Active
+C0471,Vertex Enterprises 471,Financial Services,Mid-Market,West,Inbound,Neha Kapoor,2025-08-14,2025-08-01,P001,P001,Active
+C0472,PrimeArc Digital 472,Financial Services,Large Enterprise,South,Outbound,Neha Kapoor,2025-09-12,2025-09-01,P002,P002,Active
+C0473,Quantara Systems 473,IT Services,Mid-Market,South,Outbound,Neha Kapoor,2025-09-20,2025-09-01,P001,P001,Active
+C0474,Westlake Solutions 474,Healthcare,Large Enterprise,North,Partner,Vikram Shah,2025-09-15,2025-09-01,P002,P002,Active
+C0475,HexaWorks Consulting 475,Healthcare,Mid-Market,West,Inbound,Neha Kapoor,2025-09-14,2025-09-01,P001,P001,Active
+C0476,HexaWorks Digital 476,IT Services,Mid-Market,North,Inbound,Aditi Rao,2025-09-09,2025-09-01,P001,P001,Active
+C0477,DigiCore Digital 477,IT Services,Mid-Market,West,Referral,Meera Iyer,2025-09-05,2025-09-01,P001,P001,Active
+C0478,Zenith Solutions 478,Retail,Mid-Market,Central,Inbound,Sara Khan,2025-09-03,2025-09-01,P001,P001,Active
+C0479,Orbit Labs 479,Manufacturing,Mid-Market,West,Outbound,Rahul Mehta,2025-09-06,2025-09-01,P001,P001,Active
+C0480,TrueNorth Services 480,Retail,Large Enterprise,West,Inbound,Sara Khan,2025-09-20,2025-09-01,P002,P002,Active
+C0481,TrueNorth Enterprises 481,Retail,Mid-Market,South,Events,Meera Iyer,2025-09-12,2025-09-01,P001,P001,Active
+C0482,Zenith Networks 482,IT Services,Large Enterprise,Central,Outbound,Arjun Nair,2025-09-16,2025-09-01,P002,P002,Active
+C0483,UrbanStack Labs 483,Professional Services,Large Enterprise,South,Partner,Vikram Shah,2025-09-10,2025-09-01,P002,P002,Active
+C0484,SkyGrid Technologies 484,Manufacturing,Large Enterprise,East,Events,Arjun Nair,2025-09-17,2025-09-01,P002,P002,Active
+C0485,TrueNorth Digital 485,Manufacturing,Large Enterprise,West,Outbound,Arjun Nair,2025-09-09,2025-09-01,P002,P002,Active
+C0486,Riverbend Technologies 486,IT Services,Large Enterprise,North,Outbound,Rahul Mehta,2025-09-18,2025-09-01,P002,P002,Active
+C0487,PrimeArc Technologies 487,Financial Services,Large Enterprise,North,Partner,Vikram Shah,2025-09-11,2025-09-01,P002,P002,Active
+C0488,Cobalt Consulting 488,Professional Services,Mid-Market,North,Partner,Aditi Rao,2025-10-19,2025-10-01,P001,P001,Active
+C0489,Westlake Labs 489,IT Services,Mid-Market,West,Referral,Aditi Rao,2025-10-18,2025-10-01,P001,P001,Active
+C0490,FinAxis Solutions 490,Manufacturing,Mid-Market,West,Referral,Aditi Rao,2025-10-04,2025-10-01,P001,P001,Active
+C0491,Jupiter Labs 491,Professional Services,Mid-Market,North,Inbound,Neha Kapoor,2025-10-08,2025-10-01,P001,P001,Active
+C0492,KiteBridge Services 492,IT Services,Mid-Market,West,Events,Meera Iyer,2025-10-16,2025-10-01,P001,P001,Active
+C0493,Everstone Consulting 493,Manufacturing,Large Enterprise,West,Events,Arjun Nair,2025-10-13,2025-10-01,P002,P002,Active
+C0494,Zenith Digital 494,Financial Services,Large Enterprise,South,Events,Arjun Nair,2025-10-16,2025-10-01,P002,P002,Active
+C0495,FinAxis Technologies 495,Healthcare,Mid-Market,West,Inbound,Aditi Rao,2025-10-17,2025-10-01,P001,P001,Active
+C0496,Lumina Enterprises 496,Professional Services,Mid-Market,West,Outbound,Arjun Nair,2025-10-07,2025-10-01,P001,P001,Active
+C0497,UrbanStack Systems 497,Manufacturing,Large Enterprise,East,Partner,Meera Iyer,2025-10-09,2025-10-01,P002,P002,Active
+C0498,PrimeArc Networks 498,Professional Services,Mid-Market,East,Events,Meera Iyer,2025-10-04,2025-10-01,P001,P001,Active
+C0499,Lumina Industries 499,Financial Services,Mid-Market,North,Partner,Vikram Shah,2025-10-03,2025-10-01,P001,P001,Active
+C0500,SkyGrid Technologies 500,IT Services,Large Enterprise,North,Events,Arjun Nair,2025-10-09,2025-10-01,P002,P002,Active
+C0501,DigiCore Enterprises 501,IT Services,Large Enterprise,South,Inbound,Sara Khan,2025-10-01,2025-10-01,P002,P002,Active
+C0502,KiteBridge Digital 502,Manufacturing,Mid-Market,West,Outbound,Neha Kapoor,2025-10-04,2025-10-01,P001,P001,Active
+C0503,Meridian Consulting 503,Financial Services,Large Enterprise,North,Partner,Vikram Shah,2025-11-11,2025-11-01,P002,P002,Active
+C0504,SkyGrid Industries 504,Retail,Large Enterprise,North,Referral,Sara Khan,2025-11-16,2025-11-01,P002,P002,Active
+C0505,Aarav Industries 505,Financial Services,Large Enterprise,North,Referral,Aditi Rao,2025-11-13,2025-11-01,P002,P002,Active
+C0506,Jupiter Services 506,Retail,Large Enterprise,South,Partner,Meera Iyer,2025-11-09,2025-11-01,P002,P002,Active
+C0507,Everstone Enterprises 507,IT Services,Mid-Market,West,Inbound,Sara Khan,2025-11-11,2025-11-01,P001,P001,Active
+C0508,Lumina Enterprises 508,Healthcare,Large Enterprise,North,Events,Meera Iyer,2025-11-18,2025-11-01,P002,P002,Active
+C0509,Vertex Systems 509,Professional Services,Mid-Market,West,Inbound,Neha Kapoor,2025-11-16,2025-11-01,P001,P001,Active
+C0510,UrbanStack Digital 510,Retail,Large Enterprise,North,Events,Arjun Nair,2025-11-10,2025-11-01,P002,P002,Active
+C0511,UrbanStack Consulting 511,IT Services,Large Enterprise,West,Partner,Vikram Shah,2025-11-10,2025-11-01,P002,P002,Active
+C0512,KiteBridge Industries 512,Financial Services,Mid-Market,North,Outbound,Neha Kapoor,2025-11-04,2025-11-01,P001,P001,Active
+C0513,Vertex Services 513,Manufacturing,Large Enterprise,West,Events,Meera Iyer,2025-11-10,2025-11-01,P002,P002,Active
+C0514,Nexora Networks 514,Financial Services,Large Enterprise,Central,Partner,Aditi Rao,2025-11-02,2025-11-01,P002,P002,Active
+C0515,UrbanStack Networks 515,Financial Services,Large Enterprise,West,Partner,Meera Iyer,2025-11-17,2025-11-01,P002,P002,Active
+C0516,TrueNorth Digital 516,Retail,Large Enterprise,West,Outbound,Rahul Mehta,2025-11-17,2025-11-01,P002,P002,Active
+C0517,Riverbend Industries 517,Professional Services,Mid-Market,North,Events,Vikram Shah,2025-12-19,2025-12-01,P001,P001,Active
+C0518,BluePeak Systems 518,Financial Services,Large Enterprise,North,Partner,Vikram Shah,2025-12-16,2025-12-01,P002,P002,Active
+C0519,Lumina Industries 519,Financial Services,Mid-Market,East,Inbound,Neha Kapoor,2025-12-20,2025-12-01,P001,P001,Active
+C0520,Lumina Services 520,Financial Services,Large Enterprise,West,Outbound,Rahul Mehta,2025-12-03,2025-12-01,P002,P002,Active
+C0521,DigiCore Networks 521,Manufacturing,Large Enterprise,South,Partner,Meera Iyer,2025-12-20,2025-12-01,P002,P002,Active
+C0522,Orbit Solutions 522,Manufacturing,Large Enterprise,Central,Outbound,Arjun Nair,2025-12-13,2025-12-01,P002,P002,Active
+C0523,HexaWorks Services 523,Financial Services,Mid-Market,North,Inbound,Neha Kapoor,2025-12-07,2025-12-01,P001,P001,Active
+C0524,Greenline Networks 524,Healthcare,Large Enterprise,South,Events,Meera Iyer,2025-12-14,2025-12-01,P002,P002,Active
+C0525,Everstone Consulting 525,Healthcare,Large Enterprise,North,Outbound,Arjun Nair,2025-12-10,2025-12-01,P002,P002,Active
+C0526,UrbanStack Industries 526,IT Services,Mid-Market,South,Referral,Sara Khan,2025-12-01,2025-12-01,P001,P001,Active
+C0527,Indus Digital 527,Manufacturing,Mid-Market,North,Inbound,Neha Kapoor,2025-12-15,2025-12-01,P001,P001,Active
+C0528,HexaWorks Consulting 528,Manufacturing,Large Enterprise,East,Inbound,Aditi Rao,2025-12-15,2025-12-01,P002,P002,Active
+C0529,Lumina Industries 529,IT Services,Large Enterprise,North,Outbound,Rahul Mehta,2025-12-17,2025-12-01,P002,P002,Active
