@@ -9,6 +9,7 @@ import hashlib
 import json
 import re
 import sqlite3
+import struct
 import subprocess
 import tempfile
 from pathlib import Path
@@ -20,6 +21,15 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def png_dimensions(path: Path) -> tuple[int, int]:
+    """Read PNG width and height from the IHDR chunk using only stdlib."""
+    with path.open("rb") as handle:
+        header = handle.read(24)
+    if len(header) != 24 or header[:8] != b"\x89PNG\r\n\x1a\n" or header[12:16] != b"IHDR":
+        raise ValueError(f"Not a valid PNG file: {path}")
+    return struct.unpack(">II", header[16:24])
 
 
 def add(checks: list[dict], name: str, passed: bool, evidence: str, severity: str = "High") -> None:
@@ -144,14 +154,12 @@ def main() -> None:
 
     image_dimensions = {}
     try:
-        from PIL import Image
         for name in ["dashboard_preview.png", "linkedin_project_summary.png"]:
-            with Image.open(root / "assets" / name) as image:
-                image_dimensions[name] = image.size
+            image_dimensions[name] = png_dimensions(root / "assets" / name)
         expected_dimensions = {"dashboard_preview.png": (1600, 1170), "linkedin_project_summary.png": (1200, 1420)}
         add(checks, "Final visual exports have intended dimensions", image_dimensions == expected_dimensions, f"Dimensions: {image_dimensions}", "Medium")
     except Exception as exc:
-        add(checks, "Final visual exports have intended dimensions", False, f"Visual inspection dependency failed: {exc}", "Medium")
+        add(checks, "Final visual exports have intended dimensions", False, f"PNG inspection failed: {exc}", "Medium")
 
     failures = [check for check in checks if not check["passed"]]
     overall = "Ready to share" if not failures else "Needs revision"
